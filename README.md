@@ -1,4 +1,6 @@
-# Portofolio Personal — Padillah Ramadan Siregar
+# Portofolio Personal — PADILLAH RAMADAN SIREGAR
+
+[![Deploy to GitHub Pages](https://github.com/padillahramadansiregar-droid/padillahramadansiregar-droid.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/padillahramadansiregar-droid/padillahramadansiregar-droid.github.io/actions/workflows/deploy.yml)
 
 Website portofolio personal milik **Padillah Ramadan Siregar**, mahasiswa Teknik Informatika Universitas Medan Area (UMA) yang sedang membangun jalur karier sebagai Web Developer / Programmer.
 
@@ -68,6 +70,8 @@ Seluruh isi situs ditulis apa adanya: tanpa metrik fiktif, sertifikat palsu, ata
 
 Impor memakai alias `@/`, misalnya `import Navbar from "@/components/layout/Navbar"`.
 
+Folder `out/` (hasil build) dan `.next/` dibuat otomatis saat build dan **tidak di-commit** (sudah ada di `.gitignore`).
+
 ---
 
 ## Mengubah Isi Situs
@@ -107,7 +111,9 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
 
-Tanpa `NEXT_PUBLIC_FORM_ENDPOINT`, formulir kirim email membuka aplikasi email pengguna lewat `mailto:`. File `.env.local` tidak boleh di-commit. Saat deploy lewat GitHub Actions, isi nilai yang dibutuhkan di **Settings → Secrets and variables → Actions**.
+Tanpa `NEXT_PUBLIC_FORM_ENDPOINT`, formulir kirim email membuka aplikasi email pengguna lewat `mailto:`. File `.env.local` tidak boleh di-commit.
+
+**Saat deploy lewat GitHub Actions:** buka **Settings → Secrets and variables → Actions → tab Variables**, lalu tambahkan variabel dengan nama yang sama seperti di atas. Variabel `NEXT_PUBLIC_*` selalu ikut tertanam di kode yang dikirim ke browser, jadi jangan menyimpan rahasia di dalamnya.
 
 ---
 
@@ -116,16 +122,19 @@ Tanpa `NEXT_PUBLIC_FORM_ENDPOINT`, formulir kirim email membuka aplikasi email p
 ```bash
 npm install        # pasang dependensi (sekali saja)
 npm run dev        # server pengembangan di http://localhost:3000
-npm run build      # build produksi, sekaligus cek ESLint dan TypeScript
-npm run start      # jalankan hasil build
+npm run build      # build produksi (hasil di folder out/), sekaligus cek ESLint dan TypeScript
 npm run lint       # cek linting
 ```
+
+Karena memakai `output: "export"`, hasil build berupa situs statis di folder `out/`. Untuk mencobanya secara lokal, sajikan folder itu dengan server statis (misalnya `npx serve out`).
 
 ---
 
 ## Deploy
 
-Setiap push ke branch `main` menjalankan alur di `.github/workflows/deploy.yml`, yang membangun situs dan mempublikasikannya ke GitHub Pages. Pastikan di **Settings → Pages**, sumber publikasi diatur ke **GitHub Actions**.
+Setiap push ke branch `main` menjalankan alur di `.github/workflows/deploy.yml`, yang membangun situs dan mempublikasikannya ke GitHub Pages. Pastikan di **Settings → Pages → Build and deployment → Source**, sumber publikasi diatur ke **GitHub Actions**.
+
+Status deploy terakhir bisa dilihat di tab **Actions** atau lewat badge di bagian atas README ini.
 
 ---
 

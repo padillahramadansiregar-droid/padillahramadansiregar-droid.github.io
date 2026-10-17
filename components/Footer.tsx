@@ -83,7 +83,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-emerald-400 transition-colors group"
                 >
-                  <span className="w-3.5 h-3.5 flex items-center justify-center font-bold text-emerald-400 text-[10px] shrink-0" aria-hidden="true">WA</span>
+                  <span className="w-3.5 h-3.5 flex items-center justify-center font-bold text-emerald-400 text-[10px] shrink-0" aria-hidden="true">📲</span>
                   <span>{PROFILE_DATA.contact.whatsapp}</span>
                   <ExternalLink className="w-3 h-3 text-white/30" aria-hidden="true" />
                 </a>

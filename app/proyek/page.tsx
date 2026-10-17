@@ -1,8 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, FolderGit2, AlertCircle, Inbox, BookMarked } from "lucide-react";
-import ProjectCard from "@/components/ProjectCard";
+import { ArrowUpRight, AlertCircle, Inbox } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Proyek & Studi Kasus AmberLens | Padillah Ramadan Siregar",
@@ -37,20 +36,6 @@ export default function ProyekPage() {
             <strong className="text-white font-medium">Standar Kejujuran Proyek:</strong> Seluruh inisiatif yang ditampilkan memuat status riil. Tidak ada tombol &quot;Live Demo&quot; fiktif atau repositori kosong yang disamarkan sebagai aplikasi jadi. Setiap fitur yang berstatus perencanaan dinyatakan secara gamblang.
           </p>
         </div>
-      </section>
-
-      {/* Primary Project Case Study: AmberLens */}
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
-          <div className="flex items-center gap-2 text-xs font-mono text-white/70">
-            <FolderGit2 className="w-4 h-4 text-[#F59E0B]" aria-hidden="true" />
-            <span>Studi Kasus 01 · Proyek Aktif</span>
-          </div>
-          <span className="text-xs font-mono text-[#F59E0B]">Tahap Perencanaan & Dokumentasi</span>
-        </div>
-
-        {/* Full Detailed Case Study Card */}
-        <ProjectCard isDetailed={true} />
       </section>
 
       {/* Empty State for Additional Projects */}

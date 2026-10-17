@@ -1,8 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, GraduationCap, FolderGit2, Mail, MapPin } from "lucide-react";
+import { ArrowUpRight, ArrowRight, GraduationCap, FolderGit2, Inbox, Mail, MapPin } from "lucide-react";
 import { PROFILE_DATA, EDUCATION_DATA, HOME_TECH_HIGHLIGHTS } from "@/lib/data";
-import ProjectCard from "@/components/ProjectCard";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import TechTile from "@/components/TechTile";
 import CampusLogo from "@/components/CampusLogo";
@@ -41,23 +40,16 @@ export default function HomePage() {
               {/* Action Buttons */}
               <div className="pt-2 flex flex-wrap items-center gap-3">
                 <Link
-                  href="/proyek"
+                  href="/tentang"
                   className="inline-flex items-center gap-2 rounded-lg bg-[#F59E0B] px-5 py-2.5 text-xs sm:text-sm font-semibold text-black hover:bg-[#D97706] transition-colors focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
                 >
-                  <span>Studi Perencanaan AmberLens</span>
+                  <span>Tentang Saya & Pendidikan</span>
                   <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
 
                 <Link
-                  href="/tentang"
-                  className="inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-white/[0.03] px-5 py-2.5 text-xs sm:text-sm font-medium text-white hover:bg-white/[0.08] hover:border-white/[0.2] transition-colors"
-                >
-                  <span>Tentang Saya & Pendidikan</span>
-                </Link>
-
-                <Link
                   href="/kontak"
-                  className="inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-transparent px-5 py-2.5 text-xs sm:text-sm font-medium text-white/80 hover:text-white hover:border-white/[0.2] transition-colors"
+                  className="inline-flex items-center gap-2 rounded-lg border border-white/[0.12] bg-white/[0.03] px-5 py-2.5 text-xs sm:text-sm font-medium text-white hover:bg-white/[0.08] hover:border-white/[0.2] transition-colors"
                 >
                   <Mail className="w-3.5 h-3.5 text-[#F59E0B]" aria-hidden="true" />
                   <span>Kontak Langsung</span>
@@ -89,33 +81,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Section: Sorotan Proyek Pilihan (AmberLens) */}
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] uppercase tracking-wider mb-2">
-              <FolderGit2 className="w-4 h-4" aria-hidden="true" />
-              <span>Studi Kasus Proyek Mandiri</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Sorotan Proyek Pribadi
-            </h2>
-            <p className="text-xs sm:text-sm text-white/70 mt-1 max-w-xl">
-              Inisiatif perancangan sistem web mandiri dengan keterbukaan status pengerjaan yang transparan.
-            </p>
+      {/* Section: Proyek (belum ada proyek) */}
+      <section
+        aria-labelledby="proyek-heading"
+        className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      >
+        <div className="mb-8">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] uppercase tracking-wider mb-2">
+            <FolderGit2 className="w-4 h-4" aria-hidden="true" />
+            <span>Proyek</span>
           </div>
-
-          <Link
-            href="/proyek"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F59E0B] hover:text-[#D97706] transition-colors whitespace-nowrap"
+          <h2
+            id="proyek-heading"
+            className="text-2xl sm:text-3xl font-bold tracking-tight text-white"
           >
-            <span>Buka Detail Studi Kasus</span>
-            <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
+            Proyek Pribadi
+          </h2>
+          <p className="text-xs sm:text-sm text-white/70 mt-1 max-w-xl">
+            Bagian ini hanya memuat proyek yang punya dokumentasi jelas atau implementasi nyata.
+          </p>
         </div>
 
-        {/* AmberLens Card */}
-        <ProjectCard isDetailed={false} />
+        <div className="rounded-2xl border border-dashed border-white/[0.14] bg-[#111111]/40 p-8 sm:p-10 text-center space-y-3">
+          <div className="mx-auto w-12 h-12 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/50">
+            <Inbox className="w-5 h-5" aria-hidden="true" />
+          </div>
+          <h3 className="text-base sm:text-lg font-semibold text-white">
+            Belum ada proyek yang dipublikasikan
+          </h3>
+          <p className="text-xs sm:text-sm text-white/60 max-w-md mx-auto leading-relaxed">
+            Saat ini saya masih fokus belajar lewat perkuliahan Teknik Informatika. Proyek pertama akan tampil di sini setelah punya dokumentasi yang jelas dan kode yang bisa dibuka.
+          </p>
+          <div className="pt-3 flex flex-wrap justify-center items-center gap-x-5 gap-y-2">
+            <a
+              href={PROFILE_DATA.contact.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Buka profil GitHub (tab baru)"
+              className="inline-flex items-center gap-1.5 rounded-sm text-xs font-semibold text-[#F59E0B] hover:text-[#D97706] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+            >
+              <span>Lihat profil GitHub</span>
+              <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </a>
+            <Link
+              href="/kontak"
+              className="inline-flex items-center gap-1.5 rounded-sm text-xs font-medium text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+            >
+              <span>Punya ide kolaborasi? Hubungi saya</span>
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* Section: Ringkasan Pendidikan Formal */}

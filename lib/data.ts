@@ -20,6 +20,15 @@ export interface EducationData {
   expectedYear: string;
   statusNote: string;
   location: string;
+  startYearNumber: number;
+  expectedYearNumber: number;
+  currentYear: number;
+  currentSemester: number;
+  campusAddress: string;
+  mapsUrl: string;
+  logoSrc: string;
+  organization: string;
+  relevantCourses: string[];
 }
 
 export interface ProjectData {
@@ -73,14 +82,35 @@ export const PROFILE_DATA = {
   }
 };
 
+// PERBARUI MANUAL setiap pergantian semester: currentYear dan currentSemester.
 export const EDUCATION_DATA: EducationData = {
   institution: "Universitas Medan Area (UMA)",
   faculty: "Fakultas Teknik",
   major: "Teknik Informatika",
   startYear: "2024",
   expectedYear: "2028 (Perkiraan)",
-  statusNote: "Tahun angkatan 2024. Status perkuliahan aktif. Estimasi kelulusan 2028 merupakan perkiraan masa studi sarjana reguler.",
-  location: "Medan, Sumatera Utara"
+  statusNote: "Tahun angkatan 2024. Status perkuliahan aktif pada semester 5. Estimasi kelulusan 2028 merupakan perkiraan masa studi sarjana reguler.",
+  location: "Medan, Sumatera Utara",
+  startYearNumber: 2024,
+  expectedYearNumber: 2028,
+  currentYear: 2026,
+  currentSemester: 5,
+  campusAddress: "Jl. Kolam No. 1 Medan Estate / Jl. Gedung PBSI, Medan 20223",
+  mapsUrl: "https://www.google.com/maps/search/?api=1&query=Universitas+Medan+Area+Jl.+Kolam+No.+1+Medan+Estate+Medan+20223",
+  logoSrc: "/images/uma-logo.png",
+  organization: "Belum ada",
+  relevantCourses: [
+    "Algoritma dan Pemrograman",
+    "Struktur Data",
+    "Pemrograman Berorientasi Objek",
+    "Basis Data",
+    "Interaksi Manusia dan Komputer",
+    "Dasar Rekayasa Perangkat Lunak",
+    "Sistem Analisis dan Perancangan",
+    "Pemrograman Web",
+    "Pembelajaran Mesin dan Jaringan Neural",
+    "Arsitektur Cloud dan DevOps",
+  ],
 };
 
 export type TechStatus = "sudah-dipraktikkan" | "sedang-dipelajari" | "belum-dikonfirmasi";

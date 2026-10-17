@@ -1,9 +1,11 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, GraduationCap, Compass, Target, CheckCircle2, ShieldCheck, Mail, BookOpen } from "lucide-react";
+import { ArrowUpRight, GraduationCap, Target, CheckCircle2, ShieldCheck, Mail, BookOpen, MapPin } from "lucide-react";
 import { PROFILE_DATA, EDUCATION_DATA } from "@/lib/data";
 import ProfileAvatar from "@/components/ProfileAvatar";
+import CampusLogo from "@/components/CampusLogo";
+import EducationTimeline from "@/components/EducationTimeline";
 
 export const metadata: Metadata = {
   title: "Tentang Saya | Padillah Ramadan Siregar",
@@ -108,57 +110,108 @@ export default function TentangPage() {
           {/* Right Column: Pendidikan Formal & Kontak Cepat */}
           <div className="lg:col-span-5 space-y-6">
             {/* Box Pendidikan Formal */}
-            <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 sm:p-7 space-y-6">
-              <div className="flex items-center gap-2.5 pb-4 border-b border-white/[0.06]">
-                <GraduationCap className="w-5 h-5 text-[#F59E0B]" aria-hidden="true" />
-                <h2 className="text-lg font-bold text-white">
-                  Pendidikan Formal
-                </h2>
-              </div>
-
-              <div className="space-y-4">
+            <section
+              aria-labelledby="pendidikan-formal-heading"
+              className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 sm:p-7 space-y-6"
+            >
+              <div className="flex items-center gap-3 pb-4 border-b border-white/[0.06]">
+                <CampusLogo
+                  src={EDUCATION_DATA.logoSrc}
+                  alt="Logo Universitas Medan Area"
+                  size={44}
+                />
                 <div>
-                  <span className="text-xs text-white/40 block mb-0.5">Perguruan Tinggi</span>
-                  <p className="text-base font-semibold text-white">
-                    {EDUCATION_DATA.institution}
-                  </p>
-                  <p className="text-xs text-white/60 mt-0.5">{EDUCATION_DATA.faculty}</p>
-                </div>
-
-                <div className="pt-2 border-t border-white/[0.04]">
-                  <span className="text-xs text-white/40 block mb-0.5">Program Studi</span>
-                  <p className="text-sm font-semibold text-[#F59E0B]">
-                    {EDUCATION_DATA.major}
-                  </p>
-                  <p className="text-xs text-white/50">{EDUCATION_DATA.location}</p>
-                </div>
-
-                <div className="pt-2 border-t border-white/[0.04] grid grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-xs text-white/40 block mb-0.5">Tahun Masuk</span>
-                    <p className="text-sm font-mono text-white tabular-nums">
-                      {EDUCATION_DATA.startYear}
-                    </p>
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#F59E0B] uppercase tracking-wider">
+                    <GraduationCap className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Pendidikan Tinggi</span>
                   </div>
-                  <div>
-                    <span className="text-xs text-white/40 block mb-0.5">Estimasi Kelulusan</span>
-                    <p className="text-sm font-mono text-white/80 tabular-nums">
-                      {EDUCATION_DATA.expectedYear}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Catatan Validasi Status */}
-                <div className="rounded-lg bg-black/40 border border-white/[0.06] p-3.5 text-xs text-white/60 space-y-1">
-                  <p className="font-medium text-white/80 text-[11px] uppercase tracking-wider">
-                    Catatan Status Perkuliahan:
-                  </p>
-                  <p className="leading-relaxed text-[11px]">
-                    {EDUCATION_DATA.statusNote} Status semester 5 tercatat pada saat wawancara dan tidak dijadikan asumsi tetap tanpa konfirmasi berkala.
-                  </p>
+                  <h2 id="pendidikan-formal-heading" className="text-lg font-bold text-white">
+                    Pendidikan Formal
+                  </h2>
                 </div>
               </div>
-            </div>
+
+              <EducationTimeline
+                startYear={EDUCATION_DATA.startYearNumber}
+                endYear={EDUCATION_DATA.expectedYearNumber}
+                currentYear={EDUCATION_DATA.currentYear}
+              />
+
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pt-4 border-t border-white/[0.06]">
+                <div className="col-span-2">
+                  <dt className="text-xs text-white/40 mb-0.5">Perguruan Tinggi</dt>
+                  <dd className="text-base font-semibold text-white">{EDUCATION_DATA.institution}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-white/40 mb-0.5">Fakultas</dt>
+                  <dd className="text-sm text-white">{EDUCATION_DATA.faculty}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-white/40 mb-0.5">Program Studi</dt>
+                  <dd className="text-sm font-semibold text-[#F59E0B]">{EDUCATION_DATA.major}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-white/40 mb-0.5">Mulai Kuliah</dt>
+                  <dd className="text-sm font-mono text-white tabular-nums">{EDUCATION_DATA.startYear}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-white/40 mb-0.5">Estimasi Lulus</dt>
+                  <dd className="text-sm font-mono text-white/80 tabular-nums">{EDUCATION_DATA.expectedYear}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-white/40 mb-0.5">Semester Saat Ini</dt>
+                  <dd className="text-sm font-mono text-white tabular-nums">{EDUCATION_DATA.currentSemester}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-white/40 mb-0.5">Organisasi Kampus</dt>
+                  <dd className="text-sm text-white/60">{EDUCATION_DATA.organization}</dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="text-xs text-white/40 mb-0.5">Lokasi</dt>
+                  <dd className="text-sm text-white/80">
+                    <p>{EDUCATION_DATA.campusAddress}</p>
+                    <a
+                      href={EDUCATION_DATA.mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Buka lokasi ${EDUCATION_DATA.institution} di Google Maps (tab baru)`}
+                      className="mt-1.5 inline-flex items-center gap-1.5 rounded-sm text-xs font-semibold text-[#F59E0B] hover:text-[#D97706] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+                    >
+                      <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>Buka di Google Maps</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="pt-4 border-t border-white/[0.06] space-y-3">
+                <h3 className="flex items-center gap-1.5 text-[11px] font-mono text-[#F59E0B] uppercase tracking-wider">
+                  <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Mata Kuliah Relevan</span>
+                </h3>
+                <ul className="flex flex-wrap gap-1.5">
+                  {EDUCATION_DATA.relevantCourses.map((course) => (
+                    <li
+                      key={course}
+                      className="rounded border border-white/[0.06] bg-white/[0.04] px-2 py-1 text-[11px] font-mono text-white/80"
+                    >
+                      {course}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Catatan Validasi Status */}
+              <div className="rounded-lg bg-black/40 border border-white/[0.06] p-3.5 text-xs text-white/60 space-y-1">
+                <p className="font-medium text-white/80 text-[11px] uppercase tracking-wider">
+                  Catatan Status Perkuliahan:
+                </p>
+                <p className="leading-relaxed text-[11px]">
+                  {EDUCATION_DATA.statusNote} Data semester diperbarui manual setiap pergantian semester.
+                </p>
+              </div>
+            </section>
 
             {/* Quick Contact Card */}
             <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 space-y-4">

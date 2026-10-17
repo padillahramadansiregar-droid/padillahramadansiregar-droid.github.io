@@ -1,10 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, GraduationCap, FolderGit2, Mail } from "lucide-react";
+import { ArrowUpRight, ArrowRight, GraduationCap, FolderGit2, Mail, MapPin } from "lucide-react";
 import { PROFILE_DATA, EDUCATION_DATA, HOME_TECH_HIGHLIGHTS } from "@/lib/data";
 import ProjectCard from "@/components/ProjectCard";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import TechTile from "@/components/TechTile";
+import CampusLogo from "@/components/CampusLogo";
+import EducationTimeline from "@/components/EducationTimeline";
 
 export default function HomePage() {
   return (
@@ -117,45 +119,83 @@ export default function HomePage() {
       </section>
 
       {/* Section: Ringkasan Pendidikan Formal */}
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <section
+        aria-labelledby="pendidikan-heading"
+        className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      >
         <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 sm:p-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/[0.06]">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] uppercase tracking-wider mb-2">
                 <GraduationCap className="w-4 h-4" aria-hidden="true" />
                 <span>Pendidikan Tinggi</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              <h2
+                id="pendidikan-heading"
+                className="text-xl sm:text-2xl font-bold tracking-tight text-white"
+              >
                 Pendidikan Formal
               </h2>
             </div>
-            <Link
-              href="/tentang"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 hover:text-white transition-colors"
-            >
-              <span>Pelajari Profil & Rekam Jejak</span>
-              <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </Link>
+            <span className="self-start rounded-full border border-[#F59E0B]/50 px-3 py-1 text-[11px] font-mono text-[#F59E0B]">
+              Mahasiswa aktif · Semester {EDUCATION_DATA.currentSemester}
+            </span>
           </div>
 
-          <div className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-1">
-              <span className="text-xs text-white/40 block">Perguruan Tinggi</span>
-              <p className="text-sm font-semibold text-white">{EDUCATION_DATA.institution}</p>
-              <p className="text-xs text-white/60">{EDUCATION_DATA.faculty}</p>
+          <div className="mt-8">
+            <EducationTimeline
+              startYear={EDUCATION_DATA.startYearNumber}
+              endYear={EDUCATION_DATA.expectedYearNumber}
+              currentYear={EDUCATION_DATA.currentYear}
+            />
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-white/[0.06] grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-start gap-3">
+              <CampusLogo
+                src={EDUCATION_DATA.logoSrc}
+                alt="Logo Universitas Medan Area"
+                size={40}
+              />
+              <div className="space-y-1">
+                <span className="text-xs text-white/40 block">Perguruan Tinggi</span>
+                <p className="text-sm font-semibold text-white">{EDUCATION_DATA.institution}</p>
+                <p className="text-xs text-white/60">{EDUCATION_DATA.faculty}</p>
+              </div>
             </div>
 
             <div className="space-y-1">
               <span className="text-xs text-white/40 block">Program Studi</span>
               <p className="text-sm font-semibold text-[#F59E0B]">{EDUCATION_DATA.major}</p>
-              <p className="text-xs text-white/60">{EDUCATION_DATA.location}</p>
+              <a
+                href={EDUCATION_DATA.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Lihat lokasi ${EDUCATION_DATA.institution} di Google Maps (tab baru)`}
+                className="inline-flex items-center gap-1.5 rounded-sm text-xs text-white/60 hover:text-[#F59E0B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+              >
+                <MapPin className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>{EDUCATION_DATA.location}</span>
+              </a>
             </div>
 
             <div className="space-y-1">
               <span className="text-xs text-white/40 block">Masa Perkuliahan</span>
-              <p className="text-sm font-mono text-white tabular-nums">Mulai: {EDUCATION_DATA.startYear}</p>
+              <p className="text-sm font-mono text-white tabular-nums">
+                {EDUCATION_DATA.startYear} sampai {EDUCATION_DATA.expectedYearNumber}
+              </p>
               <p className="text-xs text-white/50">{EDUCATION_DATA.expectedYear}</p>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <Link
+              href="/tentang"
+              className="inline-flex items-center gap-1.5 rounded-sm text-xs font-semibold text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+            >
+              <span>Pelajari Profil & Rekam Jejak</span>
+              <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </section>

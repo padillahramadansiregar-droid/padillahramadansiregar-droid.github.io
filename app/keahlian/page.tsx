@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Info, Compass, Sparkles } from "lucide-react";
 import { MAIN_TECH_CATEGORIES, FUTURE_FOCUS_AREAS } from "@/lib/data";
-import TechCategoryPanel from "@/components/TechCategoryPanel";
+import TechCategoryPanel from "@/components/skills/TechCategoryPanel";
 
 export const metadata: Metadata = {
   title: "Keahlian dan Teknologi | Padillah Ramadan Siregar",

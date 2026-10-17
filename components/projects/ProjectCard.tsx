@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check, Code2 } from "lucide-react";
 import { PORTFOLIO_PROJECT } from "@/lib/data";
-import ProjectPreview from "@/components/ProjectPreview";
+import ProjectPreview from "@/components/projects/ProjectPreview";
 
 interface ProjectCardProps {
   variant?: "ringkas" | "lengkap";

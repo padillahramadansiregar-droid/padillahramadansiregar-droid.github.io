@@ -2,11 +2,11 @@ import React from "react";
 import Link from "next/link";
 import { ArrowUpRight, ArrowRight, GraduationCap, FolderGit2, Mail, MapPin } from "lucide-react";
 import { PROFILE_DATA, EDUCATION_DATA, HOME_TECH_HIGHLIGHTS } from "@/lib/data";
-import ProjectCard from "@/components/ProjectCard";
-import ProfileAvatar from "@/components/ProfileAvatar";
-import TechTile from "@/components/TechTile";
-import CampusLogo from "@/components/CampusLogo";
-import EducationTimeline from "@/components/EducationTimeline";
+import ProjectCard from "@/components/projects/ProjectCard";
+import ProfileAvatar from "@/components/profile/ProfileAvatar";
+import TechTile from "@/components/skills/TechTile";
+import CampusLogo from "@/components/profile/CampusLogo";
+import EducationTimeline from "@/components/profile/EducationTimeline";
 
 export default function HomePage() {
   return (

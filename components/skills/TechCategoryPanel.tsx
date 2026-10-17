@@ -1,7 +1,7 @@
 import React from "react";
 import { Code2, Layout, Server, Database, Wrench, Layers } from "lucide-react";
 import { TechCategory } from "@/lib/data";
-import TechTile from "@/components/TechTile";
+import TechTile from "@/components/skills/TechTile";
 
 interface TechCategoryPanelProps {
   category: TechCategory;

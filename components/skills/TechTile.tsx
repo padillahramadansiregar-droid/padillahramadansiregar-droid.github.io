@@ -1,6 +1,6 @@
 import React from "react";
 import { TechItem } from "@/lib/data";
-import TechLogo from "@/components/TechLogo";
+import TechLogo from "@/components/skills/TechLogo";
 
 interface TechTileProps {
   item: TechItem;

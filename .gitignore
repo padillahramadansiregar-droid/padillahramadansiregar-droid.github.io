@@ -5,3 +5,5 @@ coverage/
 *.log
 .env*
 !.env.example
+
+semua-kode.txt

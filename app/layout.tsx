@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Sora, Inter, JetBrains_Mono } from "next/font/google";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { PROFILE_DATA, EDUCATION_DATA } from "@/lib/data";
 import "./globals.css";
 

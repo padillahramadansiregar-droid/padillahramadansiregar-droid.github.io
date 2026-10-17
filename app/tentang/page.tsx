@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, GraduationCap, Target, CheckCircle2, ShieldCheck, Mail, BookOpen, MapPin } from "lucide-react";
 import { PROFILE_DATA, EDUCATION_DATA } from "@/lib/data";
-import ProfileAvatar from "@/components/ProfileAvatar";
-import CampusLogo from "@/components/CampusLogo";
-import EducationTimeline from "@/components/EducationTimeline";
+import ProfileAvatar from "@/components/profile/ProfileAvatar";
+import CampusLogo from "@/components/profile/CampusLogo";
+import EducationTimeline from "@/components/profile/EducationTimeline";
 
 export const metadata: Metadata = {
   title: "Tentang Saya | Padillah Ramadan Siregar",

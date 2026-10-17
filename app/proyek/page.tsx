@@ -2,7 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, AlertCircle, FolderGit2 } from "lucide-react";
-import ProjectCard from "@/components/ProjectCard";
+import ProjectCard from "@/components/projects/ProjectCard";
 
 export const metadata: Metadata = {
   title: "Proyek: Portofolio Personal",

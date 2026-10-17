@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     "Teknik Informatika",
     "Universitas Medan Area",
     "Portofolio Personal",
-    "AmberLens",
+    "Next.js",
   ],
   authors: [{ name: "Padillah Ramadan Siregar" }],
   creator: "Padillah Ramadan Siregar",

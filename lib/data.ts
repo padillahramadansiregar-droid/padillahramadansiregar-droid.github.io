@@ -34,21 +34,18 @@ export interface EducationData {
 export interface ProjectData {
   id: string;
   title: string;
-  status: string;
-  statusDetail: string;
   type: string;
-  conceptSummary: string;
-  problemStatement: string;
-  targetAudience: string;
-  solutionConcept: string;
-  plannedScope: string[];
-  designAndTechConsiderations: string[];
-  completedTasks: string[];
-  pendingImplementation: string[];
-  nextSteps: string[];
-  developmentMode: string;
-  hasActiveDemo: boolean;
-  hasActiveRepo: boolean;
+  year: string;
+  status: string;
+  summary: string;
+  highlights: string[];
+  technologies: string[];
+  repoUrl: string;
+  demoUrl: string;
+  screenshotSrc: string;
+  screenshotAlt: string;
+  screenshotCaption: string;
+  urlLabel: string;
 }
 
 export const PROFILE_DATA = {
@@ -250,46 +247,24 @@ export const HOME_TECH_HIGHLIGHTS: TechItem[] = HOME_TECH_NAMES.flatMap((name) =
   return found ? [found] : [];
 });
 
-export const AMBERLENS_PROJECT: ProjectData = {
-  id: "amberlens",
-  title: "AmberLens",
-  status: "Tahap Perencanaan dan Dokumentasi",
-  statusDetail: "Proyek saat ini berada murni pada fase konseptualisasi arsitektur, pemetaan alur sistem, dan penyusunan dokumen spesifikasi teknis (SRS). Belum ada kode implementasi produksi, aplikasi berjalan, maupun server aktif.",
-  type: "Proyek Mandiri (Personal Case Study)",
-  conceptSummary: "Platform web interaktif yang dikonsepkan untuk menyatukan ekosistem penugasan mikro (micro-tasking) dari mitra, streaming dinamis secara langsung, koin digital internal, serta donasi interaktif berbasis Text-to-Speech (TTS).",
-  problemStatement: "Banyak kreator pemula dan pengguna digital menghadapi kendala monetisasi mikro dan keterbatasan interaksi langsung yang terjangkau. AmberLens dirancang untuk mengeksplorasi jembatan antara penyelesaian tugas sederhana (micro-tasks) dengan interaksi siaran langsung real-time.",
-  targetAudience: "Pengguna platform web yang ingin menyelesaikan micro-tasks, penikmat siaran langsung komunitas, serta kreator yang membutuhkan apresiasi suara terintegrasi.",
-  solutionConcept: "Mengintegrasikan empat modul inti: penugasan tugas mikro dari mitra, sistem siaran live streaming berlatensi rendah, pencatatan transaksi saldo koin internal, dan pembacaan pesan donasi secara otomatis via TTS.",
-  plannedScope: [
-    "Modul Micro-tasking: Alur verifikasi pengerjaan tugas dari mitra dan pemberian reward koin.",
-    "Modul Live Streaming: Antarmuka siaran langsung interaktif dengan kolom interaksi langsung.",
-    "Modul Koin Internal: Sistem pencatatan saldo dan mutasi koin antar pengguna di dalam platform.",
-    "Modul Text-to-Speech: Konversi pesan teks donasi menjadi suara terucap di siaran langsung."
+export const PORTFOLIO_PROJECT: ProjectData = {
+  id: "portofolio-personal",
+  title: "Portofolio Personal",
+  type: "Web App",
+  year: "2026",
+  status: "Sedang Dikembangkan",
+  summary: "Website portofolio multi-halaman untuk menampilkan profil, pendidikan, keahlian, proyek, dan kontak. Dibangun dengan Next.js dan Tailwind CSS dengan bantuan AI, lalu disesuaikan sendiri. Seluruh konten ditulis apa adanya, tanpa metrik fiktif atau klaim yang belum bisa dibuktikan.",
+  highlights: [
+    "Lima halaman utama: Beranda, Tentang Saya, Keahlian, Proyek, dan Kontak",
+    "Formulir kirim email dengan validasi nama, email, subjek, dan pesan",
+    "Tema gelap bergaya editorial teknis, dengan tampilan responsif untuk HP dan desktop",
+    "Kontak langsung lewat email, WhatsApp, GitHub, dan LinkedIn",
   ],
-  designAndTechConsiderations: [
-    "Arsitektur Berbasis Event (Event-driven) untuk menangani pesan siaran dan notifikasi suara TTS.",
-    "Integritas Data Transaksi Saldo (Ledger Verification) agar mutasi koin tidak mengalami selisih atau race condition.",
-    "Antarmuka Responsif (Mobile-first Layout) yang nyaman diakses pada perangkat berlayar sempit.",
-    "Prinsip Keamanan Data Pribadi dan validasi ketat pada setiap masukan teks sebelum diproses TTS."
-  ],
-  completedTasks: [
-    "Penyusunan dokumen analisis kebutuhan perangkat lunak (SRS awal)",
-    "Perancangan struktur halaman dan diagram hierarki navigasi pengguna",
-    "Pemetaan alur sistem (flowchart) interaksi donasi TTS dan reward tugas",
-    "Penyusunan batasan fitur dan kriteria penerimaan sistem"
-  ],
-  pendingImplementation: [
-    "Pengembangan backend API dan server socket produksi",
-    "Integrasi server streaming WebRTC/RTMP dan gateway pemrosesan audio TTS",
-    "Penyediaan database terdistribusi dan enkripsi data saldo koin",
-    "Pengujian performa sistem dan evaluasi keamanan penetrasi"
-  ],
-  nextSteps: [
-    "Membuat prototipe wireframe antarmuka fidelitas tinggi (high-fidelity) di Figma",
-    "Menyusun proof-of-concept (PoC) modul antarmuka web sederhana untuk simulasi layout",
-    "Mengonsultasikan rancangan arsitektur dengan dosen pembimbing atau mentor teknis"
-  ],
-  developmentMode: "Direncanakan sebagai inisiatif mandiri yang dikembangkan sendiri dengan eksplorasi dan bantuan AI.",
-  hasActiveDemo: false,
-  hasActiveRepo: false
+  technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
+  repoUrl: "https://github.com/padillahramadansiregar-droid/padillahramadansiregar-droid.github.io",
+  demoUrl: "https://padillahramadansiregar-droid.github.io",
+  screenshotSrc: "/images/proyek-portofolio.jpg",
+  screenshotAlt: "Tangkapan layar halaman Beranda situs Portofolio Personal",
+  screenshotCaption: "Tangkapan layar halaman Beranda.",
+  urlLabel: "padillahramadansiregar-droid.github.io",
 };

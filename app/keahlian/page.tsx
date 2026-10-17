@@ -129,7 +129,7 @@ export default function KeahlianPage() {
             Lihat Bagaimana Konsep Ini Diterapkan
           </h2>
           <p className="text-xs sm:text-sm text-white/70 max-w-xl mx-auto leading-relaxed">
-            Pelajari rancangan arsitektur dan dokumentasi studi kasus platform web mandiri pada proyek AmberLens.
+            Lihat proyek yang sedang saya kerjakan: situs portofolio ini, dibangun dengan Next.js, TypeScript, dan Tailwind CSS.
           </p>
           <div className="pt-2">
             <Link

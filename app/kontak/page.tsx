@@ -67,7 +67,7 @@ export default function KontakPage() {
           Hubungi Padillah Ramadan Siregar
         </h1>
         <p className="mt-3 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
-          Tersedia saluran komunikasi langsung melalui Email dan WhatsApp untuk berdiskusi seputar eksplorasi pemrograman web, proyek AmberLens, maupun peluang kerja sama profesional.
+          Tersedia saluran komunikasi langsung melalui Email dan WhatsApp untuk berdiskusi seputar eksplorasi pemrograman web, proyek portofolio ini, maupun peluang kerja sama profesional.
         </p>
       </section>
 
@@ -299,7 +299,7 @@ export default function KontakPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#F59E0B] font-mono">•</span>
-                  <span>Diskusi konsep dan perancangan platform AmberLens.</span>
+                  <span>Diskusi proyek portofolio ini dan perancangan website.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#F59E0B] font-mono">•</span>

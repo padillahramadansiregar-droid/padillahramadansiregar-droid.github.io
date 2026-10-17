@@ -1,0 +1,185 @@
+import React from "react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowUpRight, GraduationCap, Compass, Target, CheckCircle2, ShieldCheck, Mail, BookOpen } from "lucide-react";
+import { PROFILE_DATA, EDUCATION_DATA } from "@/lib/data";
+import ProfileAvatar from "@/components/ProfileAvatar";
+
+export const metadata: Metadata = {
+  title: "Tentang Saya | Padillah Ramadan Siregar",
+  description: "Profil, latar belakang akademik, tujuan karier, dan prinsip rekayasa web Padillah Ramadan Siregar - Mahasiswa Teknik Informatika Universitas Medan Area.",
+  openGraph: {
+    title: "Tentang Saya | Padillah Ramadan Siregar",
+    description: "Profil dan latar belakang akademik Padillah Ramadan Siregar di Universitas Medan Area.",
+  },
+};
+
+export default function TentangPage() {
+  return (
+    <div className="py-12 sm:py-16 space-y-16">
+      {/* Page Header */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 border-b border-white/[0.08] pb-10">
+        <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] uppercase tracking-wider mb-2">
+          <span>Profil & Rekam Jejak</span>
+          <span aria-hidden="true" className="text-white/30">/</span>
+          <span>Tentang Saya</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+          Mengenal Padillah Ramadan Siregar
+        </h1>
+        <p className="mt-3 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
+          Menelusuri motivasi belajar, latar belakang akademik di Program Studi Teknik Informatika, serta prinsip kerja dalam rekayasa perangkat lunak web.
+        </p>
+      </section>
+
+      {/* Main Narrative & Academic Grid */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Left Column: Narrative & Philosophy */}
+          <div className="lg:col-span-7 space-y-8">
+            {/* Latar Belakang & Motivasi Belajar */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-5 pb-2">
+                <ProfileAvatar size="md" showCardWrapper={false} />
+                <div className="space-y-1">
+                  <span className="text-xs font-mono text-[#F59E0B]">
+                    Profil Mahasiswa & Calon Developer
+                  </span>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">
+                    {PROFILE_DATA.fullName}
+                  </h2>
+                  <p className="text-xs text-white/50 font-mono">
+                    {PROFILE_DATA.contact.location} · {EDUCATION_DATA.major}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4 text-sm sm:text-base text-white/80 leading-relaxed pt-2">
+                {PROFILE_DATA.bioLong.map((paragraph, idx) => (
+                  <p key={idx} className="leading-relaxed">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            {/* Arah Fokus & Pendekatan Teknis */}
+            <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+              <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                <BookOpen className="w-5 h-5 text-[#F59E0B]" aria-hidden="true" />
+                <span>Pendekatan Rekayasa Perangkat Lunak</span>
+              </h2>
+              <p className="text-sm text-white/80 leading-relaxed">
+                Dalam mempelajari teknologi web, fokus utama saya tidak sebatas menghafal sintaks framework atau meniru template, melainkan memahami bagaimana alur data mengalir, bagaimana status komponen dikelola, serta bagaimana arsitektur sistem dapat tetap terstruktur saat kompleksitas aplikasi bertambah.
+              </p>
+            </div>
+
+            {/* Tujuan Karier Profesional */}
+            <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+              <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                <Target className="w-5 h-5 text-[#F59E0B]" aria-hidden="true" />
+                <span>Arah & Tujuan Karier</span>
+              </h2>
+              <p className="text-sm text-white/70">
+                Langkah strategis yang sedang ditekuni untuk membangun fondasi profesional:
+              </p>
+              <ul className="space-y-3 pt-1">
+                {PROFILE_DATA.careerGoals.map((goal, idx) => (
+                  <li key={idx} className="flex items-start gap-3 text-sm text-white/80">
+                    <CheckCircle2 className="w-4 h-4 text-[#F59E0B] shrink-0 mt-0.5" aria-hidden="true" />
+                    <span className="leading-relaxed">{goal}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Komitmen Integritas Teknis */}
+            <div className="rounded-xl border border-white/[0.08] bg-[#111111] p-6 space-y-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-white">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+                <span>Prinsip Integritas Portofolio</span>
+              </div>
+              <p className="text-xs text-white/70 leading-relaxed">
+                Portofolio ini dibangun dengan prinsip kejujuran mutlak: tidak mengarang pengalaman kerja atau proyek fiktif, tidak mencantumkan sertifikasi yang belum diverifikasi, dan tidak memanipulasi status perancangan sistem menjadi aplikasi jadi.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Column: Pendidikan Formal & Kontak Cepat */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Box Pendidikan Formal */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 sm:p-7 space-y-6">
+              <div className="flex items-center gap-2.5 pb-4 border-b border-white/[0.06]">
+                <GraduationCap className="w-5 h-5 text-[#F59E0B]" aria-hidden="true" />
+                <h2 className="text-lg font-bold text-white">
+                  Pendidikan Formal
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <span className="text-xs text-white/40 block mb-0.5">Perguruan Tinggi</span>
+                  <p className="text-base font-semibold text-white">
+                    {EDUCATION_DATA.institution}
+                  </p>
+                  <p className="text-xs text-white/60 mt-0.5">{EDUCATION_DATA.faculty}</p>
+                </div>
+
+                <div className="pt-2 border-t border-white/[0.04]">
+                  <span className="text-xs text-white/40 block mb-0.5">Program Studi</span>
+                  <p className="text-sm font-semibold text-[#F59E0B]">
+                    {EDUCATION_DATA.major}
+                  </p>
+                  <p className="text-xs text-white/50">{EDUCATION_DATA.location}</p>
+                </div>
+
+                <div className="pt-2 border-t border-white/[0.04] grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-xs text-white/40 block mb-0.5">Tahun Masuk</span>
+                    <p className="text-sm font-mono text-white tabular-nums">
+                      {EDUCATION_DATA.startYear}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-white/40 block mb-0.5">Estimasi Kelulusan</span>
+                    <p className="text-sm font-mono text-white/80 tabular-nums">
+                      {EDUCATION_DATA.expectedYear}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Catatan Validasi Status */}
+                <div className="rounded-lg bg-black/40 border border-white/[0.06] p-3.5 text-xs text-white/60 space-y-1">
+                  <p className="font-medium text-white/80 text-[11px] uppercase tracking-wider">
+                    Catatan Status Perkuliahan:
+                  </p>
+                  <p className="leading-relaxed text-[11px]">
+                    {EDUCATION_DATA.statusNote} Status semester 5 tercatat pada saat wawancara dan tidak dijadikan asumsi tetap tanpa konfirmasi berkala.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Contact Card */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 space-y-4">
+              <h3 className="text-sm font-semibold text-white">
+                Buka Komunikasi Langsung
+              </h3>
+              <p className="text-xs text-white/60 leading-relaxed">
+                Tersedia untuk pertanyaan seputar perkuliahan, diskusi kode pemrograman, maupun peluang kerja sama.
+              </p>
+              <Link
+                href="/kontak"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#F59E0B] px-4 py-2.5 text-xs font-semibold text-black hover:bg-[#D97706] transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Buka Halaman Kontak</span>
+                <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

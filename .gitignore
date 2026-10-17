@@ -7,3 +7,5 @@ coverage/
 !.env.example
 
 semua-kode.txt
+
+out/

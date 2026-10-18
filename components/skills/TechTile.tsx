@@ -5,11 +5,18 @@ import TechLogo from "@/components/skills/TechLogo";
 interface TechTileProps {
   item: TechItem;
   showStatusBadge?: boolean;
+  /** Urutan tile di dalam grid. Jika diisi, tile ikut animasi bertahap saat grid muncul. */
+  index?: number;
 }
 
-export default function TechTile({ item, showStatusBadge = false }: TechTileProps) {
+export default function TechTile({ item, showStatusBadge = false, index }: TechTileProps) {
+  const hasStagger = index !== undefined;
+
   return (
-    <li className="list-none">
+    <li
+      className={`list-none ${hasStagger ? "reveal-item" : ""}`.trim()}
+      style={hasStagger ? ({ "--i": index } as React.CSSProperties) : undefined}
+    >
       <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-white/[0.08] bg-[#111111] text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[#F59E0B]/40 hover:bg-[#141414] min-w-[120px] sm:min-w-[130px] h-full motion-reduce:hover:translate-y-0">
         {/* Technology Logo / Icon (Decorative, size 36px) */}
         <div className="w-10 h-10 flex items-center justify-center mb-2.5 shrink-0">

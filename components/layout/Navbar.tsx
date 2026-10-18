@@ -16,6 +16,7 @@ const NAV_ITEMS = [
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   // Close mobile menu on Escape key
   useEffect(() => {
@@ -28,8 +29,20 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Tampilkan garis bawah navbar hanya setelah halaman digulir
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#0A0A0A]/90 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 w-full border-b bg-[#0A0A0A]/90 backdrop-blur-md transition-colors duration-300 ${
+        scrolled ? "border-white/[0.12]" : "border-transparent"
+      }`}
+    >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Zone 1: Brand Wordmark */}
         <div className="flex items-center shrink-0">

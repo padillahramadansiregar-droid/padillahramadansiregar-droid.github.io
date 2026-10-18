@@ -2,6 +2,7 @@ import React from "react";
 import { Code2, Layout, Server, Database, Wrench, Layers } from "lucide-react";
 import { TechCategory } from "@/lib/data";
 import TechTile from "@/components/skills/TechTile";
+import Reveal from "@/components/layout/Reveal";
 
 interface TechCategoryPanelProps {
   category: TechCategory;
@@ -63,11 +64,11 @@ export default function TechCategoryPanel({ category }: TechCategoryPanelProps) 
 
       {/* When all items are unconfirmed (standard initial inventory) */}
       {!hasMixedStatuses ? (
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 m-0 p-0">
-          {category.items.map((item) => (
-            <TechTile key={item.name} item={item} showStatusBadge={false} />
+        <Reveal as="ul" group className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 m-0 p-0">
+          {category.items.map((item, i) => (
+            <TechTile key={item.name} item={item} showStatusBadge={false} index={i} />
           ))}
-        </ul>
+        </Reveal>
       ) : (
         /* If mixed statuses exist in the future, render sub-groups with non-empty items */
         <div className="space-y-6">
@@ -76,11 +77,11 @@ export default function TechCategoryPanel({ category }: TechCategoryPanelProps) 
               <h3 className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
                 Sudah Dipraktikkan ({practicedItems.length})
               </h3>
-              <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 m-0 p-0">
-                {practicedItems.map((item) => (
-                  <TechTile key={item.name} item={item} showStatusBadge={true} />
+              <Reveal as="ul" group className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 m-0 p-0">
+                {practicedItems.map((item, i) => (
+                  <TechTile key={item.name} item={item} showStatusBadge={true} index={i} />
                 ))}
-              </ul>
+              </Reveal>
             </div>
           )}
 
@@ -89,11 +90,11 @@ export default function TechCategoryPanel({ category }: TechCategoryPanelProps) 
               <h3 className="text-xs font-semibold uppercase tracking-wider text-[#F59E0B]">
                 Sedang Dipelajari ({learningItems.length})
               </h3>
-              <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 m-0 p-0">
-                {learningItems.map((item) => (
-                  <TechTile key={item.name} item={item} showStatusBadge={true} />
+              <Reveal as="ul" group className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 m-0 p-0">
+                {learningItems.map((item, i) => (
+                  <TechTile key={item.name} item={item} showStatusBadge={true} index={i} />
                 ))}
-              </ul>
+              </Reveal>
             </div>
           )}
 
@@ -102,11 +103,11 @@ export default function TechCategoryPanel({ category }: TechCategoryPanelProps) 
               <h3 className="text-xs font-semibold uppercase tracking-wider text-white/50">
                 Belum Dikonfirmasi ({unconfirmedItems.length})
               </h3>
-              <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 m-0 p-0">
-                {unconfirmedItems.map((item) => (
-                  <TechTile key={item.name} item={item} showStatusBadge={false} />
+              <Reveal as="ul" group className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 m-0 p-0">
+                {unconfirmedItems.map((item, i) => (
+                  <TechTile key={item.name} item={item} showStatusBadge={false} index={i} />
                 ))}
-              </ul>
+              </Reveal>
             </div>
           )}
         </div>

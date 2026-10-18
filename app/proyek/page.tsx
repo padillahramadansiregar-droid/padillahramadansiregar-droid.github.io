@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, AlertCircle, FolderGit2 } from "lucide-react";
 import ProjectCard from "@/components/projects/ProjectCard";
+import Reveal from "@/components/layout/Reveal";
 
 export const metadata: Metadata = {
   title: "Proyek: Portofolio Personal",
@@ -87,7 +88,9 @@ export default function ProyekPage() {
         <h2 id="proyek-utama-heading" className="sr-only">
           Proyek utama: Portofolio Personal
         </h2>
-        <ProjectCard variant="lengkap" headingLevel="h3" />
+        <Reveal delay={100}>
+          <ProjectCard variant="lengkap" headingLevel="h3" />
+        </Reveal>
       </section>
 
       {/* Cara situs ini dibangun */}
@@ -95,39 +98,47 @@ export default function ProyekPage() {
         aria-labelledby="cara-dibangun-heading"
         className="mx-auto max-w-6xl space-y-6 px-4 sm:px-6 lg:px-8"
       >
-        <div>
-          <div className="mb-2 font-mono text-xs uppercase tracking-wider text-[#F59E0B]">Di balik layar</div>
-          <h2 id="cara-dibangun-heading" className="text-xl font-bold tracking-tight text-white sm:text-2xl">
-            Cara Situs Ini Dibangun
-          </h2>
-        </div>
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {BUILD_NOTES.map((note) => (
-            <li key={note.title} className="rounded-xl border border-white/[0.08] bg-[#111111] p-5">
+        <Reveal>
+          <div>
+            <div className="mb-2 font-mono text-xs uppercase tracking-wider text-[#F59E0B]">Di balik layar</div>
+            <h2 id="cara-dibangun-heading" className="text-xl font-bold tracking-tight text-white sm:text-2xl">
+              Cara Situs Ini Dibangun
+            </h2>
+          </div>
+        </Reveal>
+        <Reveal as="ul" group className="grid gap-4 sm:grid-cols-2">
+          {BUILD_NOTES.map((note, i) => (
+            <li
+              key={note.title}
+              className="reveal-item rounded-xl border border-white/[0.08] bg-[#111111] p-5"
+              style={{ "--i": i } as React.CSSProperties}
+            >
               <h3 className="text-sm font-semibold text-white">{note.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-white/60">{note.text}</p>
             </li>
           ))}
-        </ul>
+        </Reveal>
       </section>
 
       {/* Proyek berikutnya */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 rounded-2xl border border-dashed border-white/[0.16] p-6 sm:p-7">
-          <div>
-            <h2 className="text-base font-semibold text-white">Proyek berikutnya akan ditambahkan di sini</h2>
-            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-white/50">
-              Hanya proyek yang sudah punya dokumentasi atau hasil nyata yang ditampilkan.
-            </p>
+        <Reveal>
+          <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 rounded-2xl border border-dashed border-white/[0.16] p-6 sm:p-7">
+            <div>
+              <h2 className="text-base font-semibold text-white">Proyek berikutnya akan ditambahkan di sini</h2>
+              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-white/50">
+                Hanya proyek yang sudah punya dokumentasi atau hasil nyata yang ditampilkan.
+              </p>
+            </div>
+            <Link
+              href="/kontak"
+              className="inline-flex items-center gap-2 rounded-sm py-2.5 text-sm font-semibold text-[#F59E0B] transition-colors hover:text-[#D97706] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+            >
+              <span>Ingin diskusi proyek? Hubungi saya</span>
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
-          <Link
-            href="/kontak"
-            className="inline-flex items-center gap-2 rounded-sm py-2.5 text-sm font-semibold text-[#F59E0B] transition-colors hover:text-[#D97706] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
-          >
-            <span>Ingin diskusi proyek? Hubungi saya</span>
-            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

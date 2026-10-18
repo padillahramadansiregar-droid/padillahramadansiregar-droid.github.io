@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
 
 interface EducationTimelineProps {
   startYear: number;
@@ -15,9 +17,38 @@ export default function EducationTimeline({
   const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
   const progress = Math.min(Math.max(((currentYear - startYear) / total) * 100, 0), 100);
 
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      const frame = window.requestAnimationFrame(() => setVisible(true));
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
-      className="px-1"
+      ref={rootRef}
+      className={`edu-timeline px-1 ${visible ? "is-visible" : ""}`.trim()}
       role="group"
       aria-label={`Garis waktu perkuliahan ${startYear} sampai ${endYear}`}
     >
@@ -26,7 +57,7 @@ export default function EducationTimeline({
         <div aria-hidden="true" className="absolute left-0 right-0 top-[6px] h-0.5 bg-white/[0.14]" />
         <div
           aria-hidden="true"
-          className="absolute left-0 top-[6px] h-0.5 bg-[#F59E0B]"
+          className="edu-fill absolute left-0 top-[6px] h-0.5 bg-[#F59E0B]"
           style={{ width: `${progress}%` }}
         />
 
@@ -67,7 +98,11 @@ export default function EducationTimeline({
                 className={`absolute top-0 flex flex-col ${position}`}
                 style={isFirst || isLast ? undefined : { left: `${pct}%` }}
               >
-                <span aria-hidden="true" className={`block h-3.5 w-3.5 rounded-full box-border ${dot}`} />
+                <span
+                  aria-hidden="true"
+                  className={`edu-dot block h-3.5 w-3.5 rounded-full box-border ${dot}`}
+                  style={{ "--i": i } as React.CSSProperties}
+                />
                 <span
                   className={`mt-2 text-xs tabular-nums ${
                     isCurrent ? "font-semibold text-[#F59E0B]" : "text-white/80"

@@ -2,7 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, AlertCircle, FolderGit2 } from "lucide-react";
-import ProjectCard from "@/components/projects/ProjectCard";
+import ProjectShowcase from "@/components/projects/ProjectShowcase";
 import Reveal from "@/components/layout/Reveal";
 
 export const metadata: Metadata = {
@@ -89,7 +89,7 @@ export default function ProyekPage() {
           Proyek utama: Portofolio Personal
         </h2>
         <Reveal delay={100}>
-          <ProjectCard variant="lengkap" headingLevel="h3" />
+          <ProjectShowcase variant="lengkap" />
         </Reveal>
       </section>
 
@@ -113,7 +113,10 @@ export default function ProyekPage() {
               className="reveal-item rounded-xl border border-white/[0.08] bg-[#111111] p-5"
               style={{ "--i": i } as React.CSSProperties}
             >
-              <h3 className="text-sm font-semibold text-white">{note.title}</h3>
+              <span className="font-mono text-[11px] text-[#F59E0B]">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3 className="mt-2 text-sm font-semibold text-white">{note.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-white/60">{note.text}</p>
             </li>
           ))}

@@ -13,8 +13,11 @@ const REPO_URL =
 const DESKTOP_FRAME = { w: 1280, h: 800 };
 /** Di ponsel, situs dirender selebar ponsel supaya tampil dengan layout mobile dan teksnya terbaca. */
 const MOBILE_FRAME = { w: 420, h: 560 };
-/** Jika lebar jendela pratinjau di bawah ini (px), pakai tampilan ponsel. */
-const COMPACT_BELOW = 480;
+/**
+ * Jika lebar jendela pratinjau di bawah ini (px), pakai tampilan ponsel (situs dirender 420px).
+ * 0 = nonaktif: di ponsel pun situs desktop 1280px diperkecil, seperti versi awal.
+ */
+const COMPACT_BELOW = 0;
 
 /** Lama tiap halaman tampil sebelum pindah (ms). Di ponsel lebih lama karena halamannya lebih panjang. */
 const DWELL_MS = 9000;

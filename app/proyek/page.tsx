@@ -1,9 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, AlertCircle, FolderGit2 } from "lucide-react";
+import { ArrowUpRight, AlertCircle, Check, FolderGit2 } from "lucide-react";
 import ProjectShowcase from "@/components/projects/ProjectShowcase";
 import Reveal from "@/components/layout/Reveal";
+import { PORTFOLIO_PROJECT } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Proyek: Portofolio Personal",
@@ -89,7 +90,34 @@ export default function ProyekPage() {
           Proyek utama: Portofolio Personal
         </h2>
         <Reveal delay={100}>
-          <ProjectShowcase variant="lengkap" />
+          <ProjectShowcase variant="lengkap" headingLevel="h3" />
+        </Reveal>
+      </section>
+
+      {/* Fitur utama */}
+      <section
+        aria-labelledby="fitur-utama-heading"
+        className="mx-auto max-w-6xl space-y-5 px-4 sm:px-6 lg:px-8"
+      >
+        <Reveal>
+          <h2
+            id="fitur-utama-heading"
+            className="font-mono text-xs uppercase tracking-wider text-[#F59E0B]"
+          >
+            Fitur utama
+          </h2>
+        </Reveal>
+        <Reveal as="ul" group className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {PORTFOLIO_PROJECT.highlights.map((item, i) => (
+            <li
+              key={item}
+              className="reveal-item flex items-start gap-2.5 rounded-xl border border-white/[0.08] bg-[#111111] p-4 text-sm leading-relaxed text-white"
+              style={{ "--i": i } as React.CSSProperties}
+            >
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#F59E0B]" aria-hidden="true" />
+              <span>{item}</span>
+            </li>
+          ))}
         </Reveal>
       </section>
 
@@ -113,10 +141,7 @@ export default function ProyekPage() {
               className="reveal-item rounded-xl border border-white/[0.08] bg-[#111111] p-5"
               style={{ "--i": i } as React.CSSProperties}
             >
-              <span className="font-mono text-[11px] text-[#F59E0B]">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <h3 className="mt-2 text-sm font-semibold text-white">{note.title}</h3>
+              <h3 className="text-sm font-semibold text-white">{note.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-white/60">{note.text}</p>
             </li>
           ))}

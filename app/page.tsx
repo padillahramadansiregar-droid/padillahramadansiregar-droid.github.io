@@ -90,7 +90,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            </div>
+</div>
 
             {/* Right Column: Profile Avatar with real asset support / monogram fallback */}
             <div className="lg:col-span-5 flex justify-center">
@@ -108,7 +108,7 @@ export default function HomePage() {
         className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
       >
         <Reveal>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-[#F59E0B] uppercase tracking-wider mb-2">
                 <FolderGit2 className="w-4 h-4" aria-hidden="true" />
@@ -136,7 +136,7 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal delay={120}>
-          <ProjectShowcase variant="ringkas" />
+          <ProjectShowcase variant="ringkas" headingLevel="h3" />
         </Reveal>
       </section>
 

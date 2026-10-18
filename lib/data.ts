@@ -31,6 +31,16 @@ export interface EducationData {
   relevantCourses: string[];
 }
 
+export interface ProjectFact {
+  label: string;
+  value: string;
+}
+
+export interface ShowcasePage {
+  label: string;
+  path: string;
+}
+
 export interface ProjectData {
   id: string;
   title: string;
@@ -39,12 +49,10 @@ export interface ProjectData {
   status: string;
   summary: string;
   highlights: string[];
+  facts: ProjectFact[];
   technologies: string[];
   repoUrl: string;
-  demoUrl: string;
-  screenshotSrc: string;
-  screenshotAlt: string;
-  screenshotCaption: string;
+  /** Alamat situs tanpa "https://", ditampilkan di bar browser pratinjau. */
   urlLabel: string;
 }
 
@@ -249,22 +257,33 @@ export const HOME_TECH_HIGHLIGHTS: TechItem[] = HOME_TECH_NAMES.flatMap((name) =
 
 export const PORTFOLIO_PROJECT: ProjectData = {
   id: "portofolio-personal",
-  title: "Portofolio Personal",
+  title: "Situs Portofolio Personal",
   type: "Web App",
   year: "2026",
   status: "Sedang Dikembangkan",
-  summary: "Website portofolio multi-halaman untuk menampilkan profil, pendidikan, keahlian, proyek, dan kontak. Dibangun dengan Next.js dan Tailwind CSS dengan bantuan AI, lalu disesuaikan sendiri. Seluruh konten ditulis apa adanya, tanpa metrik fiktif atau klaim yang belum bisa dibuktikan.",
+  summary: "Situs yang sedang Anda lihat ini. Dibangun dengan Next.js dan Tailwind CSS dengan bantuan AI, lalu disesuaikan sendiri. Teks profil, pendidikan, dan keahlian dikelola dari satu berkas data, dan situs dipublikasikan otomatis lewat GitHub Actions.",
   highlights: [
     "Lima halaman utama: Beranda, Tentang Saya, Keahlian, Proyek, dan Kontak",
     "Formulir kirim email dengan validasi nama, email, subjek, dan pesan",
     "Tema gelap bergaya editorial teknis, dengan tampilan responsif untuk HP dan desktop",
     "Kontak langsung lewat email, WhatsApp, GitHub, dan LinkedIn",
   ],
-  technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
+  facts: [
+    { label: "Halaman utama", value: "5" },
+    { label: "Framework", value: "Next.js 15" },
+    { label: "Styling", value: "Tailwind v4" },
+    { label: "Deploy", value: "Actions" },
+  ],
+  technologies: ["Next.js", "React", "TypeScript", "Tailwind CSS", "GitHub Pages"],
   repoUrl: "https://github.com/padillahramadansiregar-droid/padillahramadansiregar-droid.github.io",
-  demoUrl: "https://padillahramadansiregar-droid.github.io",
-  screenshotSrc: "/images/proyek-portofolio.jpg",
-  screenshotAlt: "Tangkapan layar halaman Beranda situs Portofolio Personal",
-  screenshotCaption: "Tangkapan layar halaman Beranda.",
   urlLabel: "padillahramadansiregar-droid.github.io",
 };
+
+// Halaman yang diputar di pratinjau proyek (urutan tab).
+export const SHOWCASE_PAGES: ShowcasePage[] = [
+  { label: "Beranda", path: "/" },
+  { label: "Tentang", path: "/tentang/" },
+  { label: "Keahlian", path: "/keahlian/" },
+  { label: "Proyek", path: "/proyek/" },
+  { label: "Kontak", path: "/kontak/" },
+];

@@ -70,9 +70,29 @@
   outline-offset: 2px;
 }
 
+/* ===== Pratinjau proyek (ProjectShowcase) ===== */
+@keyframes showcase-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes showcase-path {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ===== Animasi masuk dan scroll =====
-   Animasi selalu aktif. Jika perangkat meminta gerakan dikurangi
-   (prefers-reduced-motion), gerakan naik diganti efek pudar saja.
+   Semua efek hanya aktif jika pengguna TIDAK meminta gerakan dikurangi.
    Kelas "js" dipasang oleh skrip kecil di <head> (lihat app/layout.tsx),
    sehingga konten tetap terlihat penuh jika JavaScript mati. */
 @keyframes enter-up {
@@ -86,78 +106,62 @@
   }
 }
 
-@keyframes enter-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Hero: animasi CSS murni, berjalan saat halaman dimuat */
-.enter {
-  animation: enter-up 0.7s ease both;
-  animation-delay: var(--d, 0ms);
-}
-
-/* Blok tunggal: muncul naik + pudar saat masuk layar */
-.js .reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  transition-delay: var(--reveal-delay, 0ms);
-}
-.js .reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
-
-/* Grup (grid): anak-anak muncul bertahap */
-.js .reveal-group .reveal-item {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  transition-delay: calc(var(--i, 0) * 70ms);
-}
-.js .reveal-group.is-visible .reveal-item {
-  opacity: 1;
-  transform: none;
-}
-
-/* Garis waktu pendidikan: garis terisi dan titik muncul berurutan */
-.js .edu-timeline .edu-fill {
-  transition: width 1.1s ease 0.2s;
-}
-.js .edu-timeline:not(.is-visible) .edu-fill {
-  width: 0 !important;
-}
-.js .edu-timeline .edu-dot {
-  transition: transform 0.4s ease, opacity 0.4s ease;
-  transition-delay: calc(var(--i, 0) * 160ms);
-}
-.js .edu-timeline:not(.is-visible) .edu-dot {
-  transform: scale(0.4);
-  opacity: 0.3;
-}
-
-/* Aksesibilitas: jika pengguna meminta gerakan dikurangi,
-   semua efek tetap muncul tetapi hanya berupa pudar (tanpa gerakan). */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero: animasi CSS murni, berjalan saat halaman dimuat */
   .enter {
-    animation-name: enter-fade;
+    animation: enter-up 0.7s ease both;
+    animation-delay: var(--d, 0ms);
   }
 
-  .js .reveal,
+  /* Blok tunggal: muncul naik + pudar saat masuk layar */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Grup (grid): anak-anak muncul bertahap */
   .js .reveal-group .reveal-item {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+  .js .reveal-group.is-visible .reveal-item {
+    opacity: 1;
     transform: none;
   }
 
+  /* Garis waktu pendidikan: garis terisi dan titik muncul berurutan */
+  .js .edu-timeline .edu-fill {
+    transition: width 1.1s ease 0.2s;
+  }
+  .js .edu-timeline:not(.is-visible) .edu-fill {
+    width: 0 !important;
+  }
+  .js .edu-timeline .edu-dot {
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    transition-delay: calc(var(--i, 0) * 160ms);
+  }
   .js .edu-timeline:not(.is-visible) .edu-dot {
-    transform: none;
+    transform: scale(0.4);
+    opacity: 0.3;
+  }
+}
+
+/* Accessibility: Honor reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

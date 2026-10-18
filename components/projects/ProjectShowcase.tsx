@@ -10,13 +10,17 @@ const REPO_URL =
   "https://github.com/padillahramadansiregar-droid/padillahramadansiregar-droid.github.io";
 
 /** Ukuran "layar" tempat halaman asli dirender, lalu diperkecil agar muat. */
-const FRAME_W = 1280;
-const FRAME_H = 800;
+const DESKTOP_FRAME = { w: 1280, h: 800 };
+/** Di ponsel, situs dirender selebar ponsel supaya tampil dengan layout mobile dan teksnya terbaca. */
+const MOBILE_FRAME = { w: 420, h: 560 };
+/** Jika lebar jendela pratinjau di bawah ini (px), pakai tampilan ponsel. */
+const COMPACT_BELOW = 480;
 /** Lebar tambahan supaya scrollbar bawaan halaman tersembunyi di luar jendela. */
 const SCROLLBAR_GUARD = 24;
 
-/** Lama tiap halaman tampil sebelum pindah ke halaman berikutnya (ms). */
+/** Lama tiap halaman tampil sebelum pindah (ms). Di ponsel lebih lama karena halamannya lebih panjang. */
 const DWELL_MS = 9000;
+const DWELL_MOBILE_MS = 12000;
 /** Jeda sebelum halaman mulai di-scroll otomatis (ms). */
 const SCROLL_DELAY_MS = 1800;
 /** Sisa waktu di akhir yang dibiarkan diam agar halaman terbaca (ms). */
@@ -61,7 +65,7 @@ const easeInOut = (t: number) =>
  */
 function playEntrance(
   iframe: HTMLIFrameElement,
-  opts: { pausedRef: { current: boolean }; scrollMs: number }
+  opts: { pausedRef: { current: boolean }; scrollMs: number; blur: boolean }
 ): () => void {
   let doc: Document | null = null;
   let win: Window | null = null;
@@ -98,10 +102,15 @@ function playEntrance(
 
   const reveal = (el: HTMLElement, delay: number) => {
     const anim = el.animate(
-      [
-        { opacity: 0, transform: "translateY(22px)", filter: "blur(6px)" },
-        { opacity: 1, transform: "translateY(0)", filter: "blur(0)" },
-      ],
+      opts.blur
+        ? [
+            { opacity: 0, transform: "translateY(22px)", filter: "blur(6px)" },
+            { opacity: 1, transform: "translateY(0)", filter: "blur(0)" },
+          ]
+        : [
+            { opacity: 0, transform: "translateY(18px)" },
+            { opacity: 1, transform: "translateY(0)" },
+          ],
       {
         duration: 750,
         delay,
@@ -139,7 +148,7 @@ function playEntrance(
       if (cancelled || !win || !doc) return;
       const max = Math.max(
         0,
-        doc.documentElement.scrollHeight - (win.innerHeight || FRAME_H)
+        doc.documentElement.scrollHeight - (win.innerHeight || DESKTOP_FRAME.h)
       );
       if (max < 24) return;
 
@@ -176,14 +185,25 @@ function BrowserSim() {
   const [active, setActive] = useState(0);
   const [visited, setVisited] = useState<number[]>([0]);
   const [loaded, setLoaded] = useState<number[]>([]);
-  const [paused, setPaused] = useState(false);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [inView, setInView] = useState(true);
+  const [docHidden, setDocHidden] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   // "pending" = belum tahu, "top" = halaman utama, "embedded" = sedang dimuat di dalam jendela lain
   const [mode, setMode] = useState<"pending" | "top" | "embedded">("pending");
-  const [scale, setScale] = useState(0);
+  const [boxW, setBoxW] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const frameRefs = useRef<Record<number, HTMLIFrameElement | null>>({});
   const pausedRef = useRef(false);
+
+  const compact = boxW > 0 && boxW < COMPACT_BELOW;
+  const size = compact ? MOBILE_FRAME : DESKTOP_FRAME;
+  const dwell = compact ? DWELL_MOBILE_MS : DWELL_MS;
+  const scale = boxW / size.w;
+  // Berhenti saat kursor di atas jendela, saat di luar layar, atau saat tab browser tidak aktif.
+  const paused = hoverPaused || !inView || docHidden;
   pausedRef.current = paused;
 
   // Cegah rekursi: halaman yang dimuat di dalam jendela tidak membuat jendela lagi.
@@ -208,12 +228,40 @@ function BrowserSim() {
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
-    const update = () => setScale(el.clientWidth / FRAME_W);
+    const update = () => setBoxW(el.clientWidth);
     update();
     const observer = new ResizeObserver(update);
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Hemat baterai: jeda saat komponen keluar dari layar atau tab browser disembunyikan.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.25 }
+    );
+    io.observe(el);
+    const onVisibility = () => setDocHidden(document.hidden);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
+
+  // Geser daftar tab agar tab aktif selalu terlihat di layar sempit.
+  useEffect(() => {
+    const box = tabsRef.current;
+    const btn = box?.children[active] as HTMLElement | undefined;
+    if (!box || !btn) return;
+    box.scrollTo({
+      left: btn.offsetLeft - (box.clientWidth - btn.offsetWidth) / 2,
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  }, [active, reducedMotion]);
 
   // Putar animasi masuk setiap kali sebuah halaman menjadi aktif.
   useEffect(() => {
@@ -222,9 +270,10 @@ function BrowserSim() {
     if (!frame) return;
     return playEntrance(frame, {
       pausedRef,
-      scrollMs: DWELL_MS - SCROLL_DELAY_MS - SCROLL_TAIL_MS,
+      scrollMs: dwell - SCROLL_DELAY_MS - SCROLL_TAIL_MS,
+      blur: !compact,
     });
-  }, [active, loaded, mode, reducedMotion]);
+  }, [active, loaded, mode, reducedMotion, dwell, compact]);
 
   const markLoaded = useCallback((i: number) => {
     setLoaded((prev) => (prev.includes(i) ? prev : [...prev, i]));
@@ -234,10 +283,12 @@ function BrowserSim() {
 
   return (
     <div
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+      ref={rootRef}
+      // Hanya mouse yang menjeda. Di layar sentuh, "hover" menempel setelah ketuk dan akan menjeda selamanya.
+      onPointerEnter={(e) => e.pointerType === "mouse" && setHoverPaused(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setHoverPaused(false)}
+      onFocus={(e) => e.target.matches(":focus-visible") && setHoverPaused(true)}
+      onBlur={() => setHoverPaused(false)}
     >
       <style>{`
         @keyframes showcase-progress {
@@ -275,14 +326,17 @@ function BrowserSim() {
         </div>
 
         {/* Tab halaman + penanda waktu */}
-        <div className="flex gap-1 overflow-x-auto border-b border-white/[0.06] bg-[#121212] px-2 pt-2">
+        <div
+          ref={tabsRef}
+          className="relative flex gap-1 overflow-x-auto border-b border-white/[0.06] bg-[#121212] px-2 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
           {TABS.map((tab, i) => (
             <button
               key={tab.path}
               type="button"
               onClick={() => setActive(i)}
               aria-pressed={active === i}
-              className={`relative whitespace-nowrap rounded-t-md px-3.5 py-1.5 font-mono text-[10px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] sm:text-[11px] ${
+              className={`relative whitespace-nowrap rounded-t-md px-3.5 py-2.5 font-mono text-[10px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] sm:py-1.5 sm:text-[11px] ${
                 active === i
                   ? "bg-[#0D0D0D] text-[#F59E0B]"
                   : "text-white/40 hover:text-white/80"
@@ -298,7 +352,7 @@ function BrowserSim() {
                   }
                   className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[#F59E0B]"
                   style={{
-                    animation: `showcase-progress ${DWELL_MS}ms linear forwards`,
+                    animation: `showcase-progress ${dwell}ms linear forwards`,
                     animationPlayState: paused ? "paused" : "running",
                   }}
                 />
@@ -312,7 +366,9 @@ function BrowserSim() {
           ref={viewportRef}
           role="img"
           aria-label="Tampilan asli situs portofolio: halaman Beranda, Keahlian, Proyek, dan Kontak"
-          className="bg-grid-pattern relative aspect-[16/10] w-full overflow-hidden bg-[#0D0D0D]"
+          className={`bg-grid-pattern relative w-full overflow-hidden bg-[#0D0D0D] ${
+            compact ? "aspect-[3/4]" : "aspect-[16/10]"
+          }`}
         >
           {mode === "top" &&
             visited.map((i) => (
@@ -327,12 +383,12 @@ function BrowserSim() {
                 tabIndex={-1}
                 aria-hidden="true"
                 onLoad={() => markLoaded(i)}
-                className={`pointer-events-none absolute left-0 top-0 border-0 transition-[opacity,filter] duration-700 ease-out ${
-                  active === i ? "opacity-100 blur-0" : "opacity-0 blur-[3px]"
+                className={`pointer-events-none absolute left-0 top-0 border-0 transition-opacity duration-700 ease-out ${
+                  active === i ? "opacity-100" : "opacity-0"
                 }`}
                 style={{
-                  width: FRAME_W + SCROLLBAR_GUARD,
-                  height: FRAME_H,
+                  width: size.w + SCROLLBAR_GUARD,
+                  height: size.h,
                   transform: `scale(${scale})`,
                   transformOrigin: "top left",
                 }}

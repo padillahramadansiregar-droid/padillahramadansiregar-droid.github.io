@@ -15,8 +15,6 @@ const DESKTOP_FRAME = { w: 1280, h: 800 };
 const MOBILE_FRAME = { w: 420, h: 560 };
 /** Jika lebar jendela pratinjau di bawah ini (px), pakai tampilan ponsel. */
 const COMPACT_BELOW = 480;
-/** Lebar tambahan supaya scrollbar bawaan halaman tersembunyi di luar jendela. */
-const SCROLLBAR_GUARD = 24;
 
 /** Lama tiap halaman tampil sebelum pindah (ms). Di ponsel lebih lama karena halamannya lebih panjang. */
 const DWELL_MS = 9000;
@@ -177,6 +175,25 @@ function playEntrance(
       el.style.opacity = "";
     });
   };
+}
+
+/**
+ * Sembunyikan scrollbar di dalam iframe lewat CSS (iframe satu origin dengan situs).
+ * Cara lama menggeser scrollbar keluar jendela memotong isi halaman di sisi kanan,
+ * terutama di ponsel yang scrollbar-nya tipis dan tidak memakan tempat.
+ */
+function hideScrollbars(iframe: HTMLIFrameElement) {
+  try {
+    const doc = iframe.contentDocument;
+    if (!doc || !doc.head || doc.getElementById("showcase-no-scrollbar")) return;
+    const style = doc.createElement("style");
+    style.id = "showcase-no-scrollbar";
+    style.textContent =
+      "html{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}";
+    doc.head.appendChild(style);
+  } catch {
+    /* abaikan */
+  }
 }
 
 /* ---------- Jendela browser berisi tampilan asli situs ---------- */
@@ -382,12 +399,15 @@ function BrowserSim() {
                 loading="lazy"
                 tabIndex={-1}
                 aria-hidden="true"
-                onLoad={() => markLoaded(i)}
+                onLoad={(e) => {
+                  hideScrollbars(e.currentTarget);
+                  markLoaded(i);
+                }}
                 className={`pointer-events-none absolute left-0 top-0 border-0 transition-opacity duration-700 ease-out ${
                   active === i ? "opacity-100" : "opacity-0"
                 }`}
                 style={{
-                  width: size.w + SCROLLBAR_GUARD,
+                  width: size.w,
                   height: size.h,
                   transform: `scale(${scale})`,
                   transformOrigin: "top left",

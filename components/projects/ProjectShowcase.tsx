@@ -25,6 +25,12 @@ const DWELL_MOBILE_MS = 12000;
 const SCROLL_DELAY_MS = 1800;
 /** Sisa waktu di akhir yang dibiarkan diam agar halaman terbaca (ms). */
 const SCROLL_TAIL_MS = 1600;
+/** Jeda setelah halaman selesai dimuat sebelum ditampilkan, agar animasi masuk bawaan situs sempat mulai (ms). */
+const READY_DELAY_MS = 80;
+/** Batas tunggu pemuatan halaman; lewat dari ini halaman tetap ditampilkan (ms). */
+const LOAD_TIMEOUT_MS = 6000;
+/** Lama halaman lama dipertahankan saat pindah, agar sempat memudar (ms). */
+const SWAP_MS = 700;
 
 /* ---------- Sumber data eksternal (aman untuk SSR dan lint) ---------- */
 
@@ -88,14 +94,18 @@ function Wireframe() {
 
 /* ---------- Jendela browser berisi tampilan asli situs ---------- */
 
+type Frame = { id: number; index: number };
+
 function BrowserSim() {
   const pages = SHOWCASE_PAGES;
 
   const [active, setActive] = useState(0);
-  const [visited, setVisited] = useState<number[]>([0]);
-  const [loaded, setLoaded] = useState<number[]>([]);
-  const [advance, setAdvance] = useState(true); // tab berganti sendiri
-  const [hoverPaused, setHoverPaused] = useState(false);
+  // Iframe yang sedang terpasang. Setiap pindah halaman, iframe baru dimuat dari awal supaya
+  // animasi masuk bawaan situs berputar lagi. Halaman sebelumnya tetap terlihat sampai yang baru siap.
+  const [frames, setFrames] = useState<Frame[]>([{ id: 1, index: 0 }]);
+  const [shownId, setShownId] = useState(0); // id iframe yang sedang tampil (0 = belum ada)
+  const [tapPaused, setTapPaused] = useState(false); // dijeda lewat ketukan (layar sentuh)
+  const [hoverPaused, setHoverPaused] = useState(false); // dijeda kursor mouse
   const [inView, setInView] = useState(false);
   const [everInView, setEverInView] = useState(false);
   const [boxW, setBoxW] = useState(0);
@@ -107,8 +117,11 @@ function BrowserSim() {
   const rootRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
   const frameRefs = useRef<Record<number, HTMLIFrameElement | null>>({});
   const pausedRef = useRef(true);
+  const latestId = useRef(1);
+  const timers = useRef<number[]>([]);
 
   // Pratinjau hidup hanya dimuat jika pengguna tidak memakai mode hemat data dan komponen sudah pernah terlihat.
   const live = !saveData && everInView;
@@ -117,21 +130,45 @@ function BrowserSim() {
   const dwell = compact ? DWELL_MOBILE_MS : DWELL_MS;
   const scale = boxW / size.w;
   const scrollMs = dwell - SCROLL_DELAY_MS - SCROLL_TAIL_MS;
-  const paused = hoverPaused || !inView || docHidden;
-  const autoplay = live && advance && !reducedMotion;
+  const paused = hoverPaused || tapPaused || !inView || docHidden;
+  const activeFrame = frames[frames.length - 1];
+  const ready = live && shownId === activeFrame.id;
+  const autoplay = ready && !reducedMotion;
+  const nextIndex = (active + 1) % pages.length;
 
   useEffect(() => {
     pausedRef.current = paused;
   }, [paused]);
 
-  const goTo = useCallback((index: number) => {
-    setActive(index);
-    setVisited((prev) => (prev.includes(index) ? prev : [...prev, index]));
+  const later = useCallback((fn: () => void, ms: number) => {
+    timers.current.push(window.setTimeout(fn, ms));
   }, []);
 
-  const markLoaded = useCallback((index: number) => {
-    setLoaded((prev) => (prev.includes(index) ? prev : [...prev, index]));
+  useEffect(() => {
+    const list = timers.current;
+    return () => list.forEach((id) => window.clearTimeout(id));
   }, []);
+
+  // Tampilkan iframe yang sudah siap, lalu lepas iframe lama setelah sempat memudar.
+  const reveal = useCallback(
+    (id: number) => {
+      if (id !== latestId.current) return; // hanya iframe terbaru yang boleh tampil
+      setShownId(id);
+      later(() => setFrames((prev) => prev.filter((f) => f.id === id)), SWAP_MS);
+    },
+    [later]
+  );
+
+  const goTo = useCallback(
+    (index: number) => {
+      latestId.current += 1;
+      const id = latestId.current;
+      setActive(index);
+      setFrames((prev) => [...prev.slice(-1), { id, index }]);
+      later(() => reveal(id), LOAD_TIMEOUT_MS);
+    },
+    [later, reveal]
+  );
 
   // Skala mengikuti lebar jendela (ResizeObserver langsung melapor saat mulai diamati).
   useEffect(() => {
@@ -168,57 +205,69 @@ function BrowserSim() {
     });
   }, [active, reducedMotion]);
 
-  // Scroll otomatis pelan di dalam halaman aktif. Animasi masuk dikerjakan oleh situs itu sendiri.
+  // Satu jam untuk semuanya: garis waktu tab, scroll halaman, dan pindah otomatis.
+  // Jam berhenti saat dijeda, jadi ketiganya selalu sinkron.
   useEffect(() => {
-    if (!live || reducedMotion || !loaded.includes(active)) return;
-    const iframe = frameRefs.current[active];
-    if (!iframe) return;
+    if (!ready || reducedMotion) return;
 
     let win: Window | null = null;
     let doc: Document | null = null;
     try {
-      win = iframe.contentWindow;
-      doc = iframe.contentDocument;
+      const iframe = frameRefs.current[activeFrame.id];
+      win = iframe?.contentWindow ?? null;
+      doc = iframe?.contentDocument ?? null;
     } catch {
-      return;
+      /* tanpa akses ke isi halaman, hanya garis waktu dan pindah otomatis yang jalan */
     }
-    if (!win || !doc) return;
 
-    const target = win;
-    const targetDoc = doc;
-    target.scrollTo({ top: 0, behavior: "instant" });
-
+    let elapsed = 0;
+    let last = performance.now();
+    let maxScroll = -1;
     let raf = 0;
-    let cancelled = false;
 
-    const timer = window.setTimeout(() => {
-      if (cancelled) return;
-      const max = Math.max(0, targetDoc.documentElement.scrollHeight - (target.innerHeight || size.h));
-      if (max < 24) return;
+    const tick = (now: number) => {
+      const dt = Math.min(now - last, 80); // cegah lonjakan setelah tab browser kembali aktif
+      last = now;
+      if (!pausedRef.current) elapsed += dt;
 
-      let elapsed = 0;
-      let last = performance.now();
-      const tick = (now: number) => {
-        if (cancelled) return;
-        const dt = now - last;
-        last = now;
-        if (!pausedRef.current) elapsed += dt;
-        const t = Math.min(1, elapsed / scrollMs);
-        target.scrollTo({ top: max * easeInOut(t), behavior: "instant" });
-        if (t < 1) raf = requestAnimationFrame(tick);
-      };
+      if (barRef.current) {
+        barRef.current.style.transform = `scaleX(${Math.min(1, elapsed / dwell)})`;
+      }
+
+      if (win && doc && elapsed > SCROLL_DELAY_MS) {
+        if (maxScroll < 0) {
+          maxScroll = Math.max(0, doc.documentElement.scrollHeight - (win.innerHeight || size.h));
+        }
+        if (maxScroll >= 24) {
+          const t = Math.min(1, (elapsed - SCROLL_DELAY_MS) / scrollMs);
+          win.scrollTo({ top: maxScroll * easeInOut(t), behavior: "instant" });
+        }
+      }
+
+      if (elapsed >= dwell) {
+        goTo(nextIndex);
+        return;
+      }
       raf = requestAnimationFrame(tick);
-    }, SCROLL_DELAY_MS);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-      cancelAnimationFrame(raf);
     };
-  }, [active, loaded, live, reducedMotion, scrollMs, size.h]);
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [ready, reducedMotion, activeFrame.id, dwell, scrollMs, size.h, nextIndex, goTo]);
 
   return (
     <div ref={rootRef}>
+      <style>{`
+        @keyframes showcase-path {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes showcase-tab {
+          from { background-color: rgba(245, 158, 11, 0.22); transform: translateY(-2px); }
+          to { background-color: #0D0D0D; transform: translateY(0); }
+        }
+      `}</style>
+
       <div className="overflow-hidden rounded-xl border border-white/[0.12] bg-[#0D0D0D]">
         {/* Bar browser */}
         <div className="flex items-center gap-3 border-b border-white/[0.08] bg-[#161616] px-3 py-2.5">
@@ -256,25 +305,27 @@ function BrowserSim() {
                 key={page.path}
                 type="button"
                 onClick={() => {
+                  if (i === active) return;
+                  setTapPaused(false);
                   goTo(i);
-                  setAdvance(false);
                 }}
                 aria-pressed={active === i}
                 className={`relative whitespace-nowrap rounded-t-md px-3.5 py-2.5 font-mono text-[10px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] sm:py-1.5 sm:text-[11px] ${
-                  active === i ? "bg-[#0D0D0D] text-[#F59E0B]" : "text-white/40 hover:text-white/80"
+                  active === i
+                    ? "bg-[#0D0D0D] text-[#F59E0B] motion-safe:animate-[showcase-tab_0.4s_ease-out]"
+                    : "text-white/40 hover:text-white/80"
                 }`}
               >
                 {page.label}
                 {active === i && autoplay && (
                   <span
-                    key={`bar-${active}`}
+                    key={`bar-${activeFrame.id}`}
+                    ref={barRef}
                     aria-hidden="true"
-                    onAnimationEnd={() => goTo((active + 1) % pages.length)}
-                    className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[#F59E0B]"
-                    style={{
-                      animation: `showcase-progress ${dwell}ms linear forwards`,
-                      animationPlayState: paused ? "paused" : "running",
-                    }}
+                    className={`absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[#F59E0B] transition-opacity ${
+                      paused ? "opacity-40" : "opacity-100"
+                    }`}
+                    style={{ transform: "scaleX(0)" }}
                   />
                 )}
               </button>
@@ -282,46 +333,63 @@ function BrowserSim() {
           </div>
         </div>
 
-        {/* Layar: halaman asli situs, diperkecil. Hanya mouse di atas layar yang menjeda. */}
+        {/* Layar: halaman asli situs, diperkecil. Mouse di atas layar menjeda; di layar sentuh, ketuk untuk jeda atau lanjut. */}
         <div
           ref={viewportRef}
           role="img"
           aria-label="Tampilan asli situs portofolio: halaman Beranda, Tentang, Keahlian, Proyek, dan Kontak"
           onPointerEnter={(e) => e.pointerType === "mouse" && setHoverPaused(true)}
           onPointerLeave={(e) => e.pointerType === "mouse" && setHoverPaused(false)}
-          className={`bg-grid-pattern relative w-full overflow-hidden bg-[#0D0D0D] ${
+          onClick={(e) => {
+            const type = (e.nativeEvent as PointerEvent).pointerType;
+            if (type && type !== "mouse") setTapPaused((value) => !value);
+          }}
+          className={`bg-grid-pattern relative w-full touch-manipulation overflow-hidden bg-[#0D0D0D] ${
             compact ? "aspect-[3/4]" : "aspect-[16/10]"
           }`}
         >
-          {!live && <Wireframe />}
+          {(!live || shownId === 0) && <Wireframe />}
 
           {live &&
-            visited.map((i) => (
-              <iframe
-                key={pages[i].path}
-                ref={(node) => {
-                  frameRefs.current[i] = node;
-                }}
-                src={pages[i].path}
-                title={`Pratinjau halaman ${pages[i].label}`}
-                sandbox="allow-same-origin allow-scripts"
-                tabIndex={-1}
-                aria-hidden="true"
-                onLoad={(e) => {
-                  hideScrollbars(e.currentTarget);
-                  markLoaded(i);
-                }}
-                className={`pointer-events-none absolute left-0 top-0 border-0 transition-opacity duration-700 ease-out motion-reduce:transition-none ${
-                  active === i ? "opacity-100" : "opacity-0"
+            frames.map((frame) => (
+              <div
+                key={frame.id}
+                className={`absolute inset-0 transition-[opacity,translate] duration-500 ease-out motion-reduce:transition-none ${
+                  shownId === frame.id ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
                 }`}
-                style={{
-                  width: size.w,
-                  height: size.h,
-                  transform: `scale(${scale})`,
-                  transformOrigin: "top left",
-                }}
-              />
+              >
+                <iframe
+                  ref={(node) => {
+                    frameRefs.current[frame.id] = node;
+                  }}
+                  src={pages[frame.index].path}
+                  title={`Pratinjau halaman ${pages[frame.index].label}`}
+                  sandbox="allow-same-origin allow-scripts"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  onLoad={(e) => {
+                    hideScrollbars(e.currentTarget);
+                    later(() => reveal(frame.id), READY_DELAY_MS);
+                  }}
+                  className="pointer-events-none absolute left-0 top-0 border-0"
+                  style={{
+                    width: size.w,
+                    height: size.h,
+                    transform: `scale(${scale})`,
+                    transformOrigin: "top left",
+                  }}
+                />
+              </div>
             ))}
+
+          {tapPaused && (
+            <div
+              role="status"
+              className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/[0.14] bg-black/70 px-3 py-1 font-mono text-[10px] text-white/80 backdrop-blur-sm"
+            >
+              Dijeda · ketuk untuk lanjut
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft, Send, Mail, CheckCircle2, AlertTriangle, ShieldCheck, RefreshCw } from "lucide-react";
 import { PROFILE_DATA } from "@/lib/data";
+import Reveal from "@/components/layout/Reveal";
 
 interface FormData {
   name: string;
@@ -213,243 +214,245 @@ export default function KirimEmailPage() {
 
       {/* Form Container */}
       <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 sm:p-10 shadow-xl space-y-8">
-          {/* Header Card Status Banner */}
-          <div className="flex items-center justify-between pb-6 border-b border-white/[0.06] text-xs font-mono text-white/50">
-            <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-[#F59E0B]" aria-hidden="true" />
-              <span>Tujuan: {PROFILE_DATA.contact.email}</span>
+        <Reveal>
+          <div className="rounded-2xl border border-white/[0.08] bg-[#111111] p-6 sm:p-10 shadow-xl space-y-8">
+            {/* Header Card Status Banner */}
+            <div className="flex items-center justify-between pb-6 border-b border-white/[0.06] text-xs font-mono text-white/50">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-[#F59E0B]" aria-hidden="true" />
+                <span>Tujuan: {PROFILE_DATA.contact.email}</span>
+              </div>
+              <span className="hidden sm:inline">Format: UTF-8 Enkripsi Aman</span>
             </div>
-            <span className="hidden sm:inline">Format: UTF-8 Enkripsi Aman</span>
-          </div>
 
-          {/* Success State View */}
-          {status === "success" && (
-            <div
-              role="status"
-              aria-live="polite"
-              className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 space-y-4"
-            >
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
-                <div className="space-y-1">
-                  <h2 className="text-sm font-semibold text-white">
-                    {usedFallback ? "Draf Pesan Siap di Aplikasi Email" : "Pesan Terkirim"}
-                  </h2>
-                  <p className="text-xs text-white/80 leading-relaxed">
-                    {statusMessage}
-                  </p>
+            {/* Success State View */}
+            {status === "success" && (
+              <div
+                role="status"
+                aria-live="polite"
+                className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 space-y-4"
+              >
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
+                  <div className="space-y-1">
+                    <h2 className="text-sm font-semibold text-white">
+                      {usedFallback ? "Draf Pesan Siap di Aplikasi Email" : "Pesan Terkirim"}
+                    </h2>
+                    <p className="text-xs text-white/80 leading-relaxed">
+                      {statusMessage}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="inline-flex items-center gap-2 rounded-lg bg-white/[0.08] border border-white/[0.12] px-4 py-2 text-xs font-medium text-white hover:bg-white/[0.15] transition-colors"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Kirim Pesan Lain</span>
+                  </button>
+                  <Link
+                    href="/kontak"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-[#F59E0B] px-4 py-2 text-xs font-semibold text-black hover:bg-[#D97706] transition-colors"
+                  >
+                    <span>Kembali ke Ringkasan Kontak</span>
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* Error State Banner */}
+            {status === "error" && (
+              <div
+                role="alert"
+                aria-live="assertive"
+                className="rounded-xl border border-red-500/30 bg-red-500/10 p-5 flex items-start gap-3"
+              >
+                <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
+                <div className="space-y-1 text-xs">
+                  <p className="font-semibold text-white">Kendala Pengiriman</p>
+                  <p className="text-white/80 leading-relaxed">{statusMessage}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Form Fields (kept visible so user data is never lost) */}
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Nama Pengirim */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="sender-name"
+                    className="block text-xs font-medium uppercase tracking-wider text-white"
+                  >
+                    Nama Lengkap <span className="text-[#F59E0B]">*</span>
+                  </label>
+                  <input
+                    ref={nameInputRef}
+                    id="sender-name"
+                    name="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={handleChange}
+                    disabled={status === "submitting"}
+                    placeholder="Contoh: Budi Santoso"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "name-error" : undefined}
+                    className={`w-full rounded-lg border bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 ${
+                      errors.name
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
+                    }`}
+                  />
+                  {errors.name && (
+                    <p id="name-error" className="text-xs text-red-400">
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Alamat Email Pengirim */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="sender-email"
+                    className="block text-xs font-medium uppercase tracking-wider text-white"
+                  >
+                    Alamat Email Anda <span className="text-[#F59E0B]">*</span>
+                  </label>
+                  <input
+                    ref={emailInputRef}
+                    id="sender-email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={status === "submitting"}
+                    placeholder="nama@perusahaan.com"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
+                    className={`w-full rounded-lg border bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 ${
+                      errors.email
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
+                    }`}
+                  />
+                  {errors.email && (
+                    <p id="email-error" className="text-xs text-red-400">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="inline-flex items-center gap-2 rounded-lg bg-white/[0.08] border border-white/[0.12] px-4 py-2 text-xs font-medium text-white hover:bg-white/[0.15] transition-colors"
+              {/* Subjek Pesan */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="message-subject"
+                  className="block text-xs font-medium uppercase tracking-wider text-white"
                 >
-                  <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Kirim Pesan Lain</span>
+                  Topik / Subjek Pesan <span className="text-[#F59E0B]">*</span>
+                </label>
+                <input
+                  ref={subjectInputRef}
+                  id="message-subject"
+                  name="subject"
+                  type="text"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  disabled={status === "submitting"}
+                  placeholder="Contoh: Diskusi Peluang Kolaborasi Proyek Web"
+                  aria-invalid={!!errors.subject}
+                  aria-describedby={errors.subject ? "subject-error" : undefined}
+                  className={`w-full rounded-lg border bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 ${
+                    errors.subject
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
+                  }`}
+                />
+                {errors.subject && (
+                  <p id="subject-error" className="text-xs text-red-400">
+                    {errors.subject}
+                  </p>
+                )}
+              </div>
+
+              {/* Isi Pesan */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="message-body"
+                    className="block text-xs font-medium uppercase tracking-wider text-white"
+                  >
+                    Isi Pesan <span className="text-[#F59E0B]">*</span>
+                  </label>
+                  <span className="text-[11px] font-mono text-white/40">
+                    {formData.message.length}/3000 karakter
+                  </span>
+                </div>
+                <textarea
+                  ref={messageInputRef}
+                  id="message-body"
+                  name="message"
+                  rows={6}
+                  value={formData.message}
+                  onChange={handleChange}
+                  disabled={status === "submitting"}
+                  placeholder="Jelaskan kebutuhan, latar belakang proyek, atau pertanyaan Anda secara rinci..."
+                  aria-invalid={!!errors.message}
+                  aria-describedby={errors.message ? "message-error" : undefined}
+                  className={`w-full rounded-lg border bg-black/40 px-3.5 py-3 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 resize-y ${
+                    errors.message
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
+                  }`}
+                />
+                {errors.message && (
+                  <p id="message-error" className="text-xs text-red-400">
+                    {errors.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Transparency Note */}
+              <div className="rounded-lg bg-black/30 border border-white/[0.04] p-3.5 text-xs text-white/60 flex items-start gap-2.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
+                <p className="leading-relaxed text-[11px]">
+                  <strong className="text-white/80">Transparansi Privasi:</strong> Data yang Anda ketikkan hanya digunakan untuk keperluan komunikasi langsung dan tidak disimpan ke database analitik atau dibagikan ke pihak ketiga mana pun.
+                </p>
+              </div>
+
+              {/* Submit & Action Buttons */}
+              <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#F59E0B] px-6 py-3 text-xs sm:text-sm font-semibold text-black hover:bg-[#D97706] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+                >
+                  {status === "submitting" ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" aria-hidden="true" />
+                      <span>Sedang Memproses...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" aria-hidden="true" />
+                      <span>Kirim Pesan Sekarang</span>
+                    </>
+                  )}
                 </button>
+
                 <Link
                   href="/kontak"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[#F59E0B] px-4 py-2 text-xs font-semibold text-black hover:bg-[#D97706] transition-colors"
+                  className="inline-flex items-center justify-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors py-2"
                 >
-                  <span>Kembali ke Ringkasan Kontak</span>
+                  <span>Batal & Kembali ke Kontak</span>
                 </Link>
               </div>
-            </div>
-          )}
-
-          {/* Error State Banner */}
-          {status === "error" && (
-            <div
-              role="alert"
-              aria-live="assertive"
-              className="rounded-xl border border-red-500/30 bg-red-500/10 p-5 flex items-start gap-3"
-            >
-              <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
-              <div className="space-y-1 text-xs">
-                <p className="font-semibold text-white">Kendala Pengiriman</p>
-                <p className="text-white/80 leading-relaxed">{statusMessage}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Form Fields (kept visible so user data is never lost) */}
-          <form onSubmit={handleSubmit} noValidate className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {/* Nama Pengirim */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="sender-name"
-                  className="block text-xs font-medium uppercase tracking-wider text-white"
-                >
-                  Nama Lengkap <span className="text-[#F59E0B]">*</span>
-                </label>
-                <input
-                  ref={nameInputRef}
-                  id="sender-name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                  disabled={status === "submitting"}
-                  placeholder="Contoh: Budi Santoso"
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
-                  className={`w-full rounded-lg border bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 ${
-                    errors.name
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
-                  }`}
-                />
-                {errors.name && (
-                  <p id="name-error" className="text-xs text-red-400">
-                    {errors.name}
-                  </p>
-                )}
-              </div>
-
-              {/* Alamat Email Pengirim */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="sender-email"
-                  className="block text-xs font-medium uppercase tracking-wider text-white"
-                >
-                  Alamat Email Anda <span className="text-[#F59E0B]">*</span>
-                </label>
-                <input
-                  ref={emailInputRef}
-                  id="sender-email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  disabled={status === "submitting"}
-                  placeholder="nama@perusahaan.com"
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "email-error" : undefined}
-                  className={`w-full rounded-lg border bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 ${
-                    errors.email
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
-                  }`}
-                />
-                {errors.email && (
-                  <p id="email-error" className="text-xs text-red-400">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Subjek Pesan */}
-            <div className="space-y-2">
-              <label
-                htmlFor="message-subject"
-                className="block text-xs font-medium uppercase tracking-wider text-white"
-              >
-                Topik / Subjek Pesan <span className="text-[#F59E0B]">*</span>
-              </label>
-              <input
-                ref={subjectInputRef}
-                id="message-subject"
-                name="subject"
-                type="text"
-                value={formData.subject}
-                onChange={handleChange}
-                disabled={status === "submitting"}
-                placeholder="Contoh: Diskusi Peluang Kolaborasi Proyek Web"
-                aria-invalid={!!errors.subject}
-                aria-describedby={errors.subject ? "subject-error" : undefined}
-                className={`w-full rounded-lg border bg-black/40 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 ${
-                  errors.subject
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
-                }`}
-              />
-              {errors.subject && (
-                <p id="subject-error" className="text-xs text-red-400">
-                  {errors.subject}
-                </p>
-              )}
-            </div>
-
-            {/* Isi Pesan */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="message-body"
-                  className="block text-xs font-medium uppercase tracking-wider text-white"
-                >
-                  Isi Pesan <span className="text-[#F59E0B]">*</span>
-                </label>
-                <span className="text-[11px] font-mono text-white/40">
-                  {formData.message.length}/3000 karakter
-                </span>
-              </div>
-              <textarea
-                ref={messageInputRef}
-                id="message-body"
-                name="message"
-                rows={6}
-                value={formData.message}
-                onChange={handleChange}
-                disabled={status === "submitting"}
-                placeholder="Jelaskan kebutuhan, latar belakang proyek, atau pertanyaan Anda secara rinci..."
-                aria-invalid={!!errors.message}
-                aria-describedby={errors.message ? "message-error" : undefined}
-                className={`w-full rounded-lg border bg-black/40 px-3.5 py-3 text-sm text-white placeholder-white/30 transition-colors focus:outline-none focus:ring-2 resize-y ${
-                  errors.message
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-white/[0.1] focus:border-[#F59E0B] focus:ring-[#F59E0B]"
-                }`}
-              />
-              {errors.message && (
-                <p id="message-error" className="text-xs text-red-400">
-                  {errors.message}
-                </p>
-              )}
-            </div>
-
-            {/* Transparency Note */}
-            <div className="rounded-lg bg-black/30 border border-white/[0.04] p-3.5 text-xs text-white/60 flex items-start gap-2.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
-              <p className="leading-relaxed text-[11px]">
-                <strong className="text-white/80">Transparansi Privasi:</strong> Data yang Anda ketikkan hanya digunakan untuk keperluan komunikasi langsung dan tidak disimpan ke database analitik atau dibagikan ke pihak ketiga mana pun.
-              </p>
-            </div>
-
-            {/* Submit & Action Buttons */}
-            <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-              <button
-                type="submit"
-                disabled={status === "submitting"}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#F59E0B] px-6 py-3 text-xs sm:text-sm font-semibold text-black hover:bg-[#D97706] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
-              >
-                {status === "submitting" ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" aria-hidden="true" />
-                    <span>Sedang Memproses...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" aria-hidden="true" />
-                    <span>Kirim Pesan Sekarang</span>
-                  </>
-                )}
-              </button>
-
-              <Link
-                href="/kontak"
-                className="inline-flex items-center justify-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors py-2"
-              >
-                <span>Batal & Kembali ke Kontak</span>
-              </Link>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        </Reveal>
       </section>
     </div>
   );
